@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HAFS Grand Orbital Watch</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body class="dark-mode"> <header>
+        <div class="header-container">
+            <div class="hafs-logo">HAFS</div>
+            <div class="title-group">
+                <h1>GRAND ORBITAL WATCH</h1>
+                <p>Integrated Astronomical Phenomena Simulator</p>
+            </div>
+            
+            <div class="target-selector">
+                <label for="sim-mode">SIMULATION MODE:</label>
+                <select id="sim-mode">
+                    <option value="solar-system">태양계 오비탈 탐사 (3D)</option>
+                    <option value="eclipse">정밀 일식 모델링 (2D)</option>
+                </select>
+            </div>
+
+            <div class="system-status">
+                <span class="status-dot"></span> <span id="mode-name-display">SOLAR SYSTEM ACTIVE</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="dashboard-grid">
+        
+        <section class="panel control-panel">
+            <div class="panel-header">
+                <h2>O1. SIMULATION CONTROLS</h2>
+            </div>
+            
+            <div id="solar-controls" class="control-group">
+                <label>시뮬레이션 속도 (Days/Sec)</label>
+                <input type="range" id="speed-slider" min="0" max="100" value="10">
+                <span id="speed-val" class="mono-data">10 days/s</span>
+                
+                <label style="margin-top: 15px;">카메라 시점 관측</label>
+                <select id="camera-view">
+                    <option value="top">전체 태양계 조감도 (Top-down)</option>
+                    <option value="earth">지구 중심 관측 (Geocentric)</option>
+                    <option value="sun">태양 표면 근접 (Heliocentric)</option>
+                </select>
+            </div>
+
+            <div id="eclipse-controls" class="control-group" style="display: none;">
+                <label>일식 기하학 유형 설정</label>
+                <div class="radio-group">
+                    <input type="radio" id="type-total" name="eclipse-type" value="total" checked>
+                    <label for="type-total">개기일식 (Total)</label><br>
+                    <input type="radio" id="type-annular" name="eclipse-type" value="annular">
+                    <label for="type-annular">금환일식 (Annular)</label><br>
+                    <input type="radio" id="type-partial" name="eclipse-type" value="partial">
+                    <label for="type-partial">부분일식 (Partial)</label>
+                </div>
+                
+                <label style="margin-top: 15px;">지구-달 거리 제어 (원/근지점)</label>
+                <input type="range" id="moon-dist-slider" min="360" max="405" value="384">
+                <span id="moon-dist-val" class="mono-data">384,000 km</span>
+            </div>
+        </section>
+
+        <section class="panel map-panel">
+            <div class="panel-header">
+                <h2>O2. VISUALIZATION CANVAS</h2>
+            </div>
+            <div id="three-container" class="viz-container"></div>
+            <div id="d3-container" class="viz-container" style="display: none; background-color: #050a15;"></div>
+        </section>
+
+        <section class="panel info-panel">
+            <div class="panel-header">
+                <h2>O3. ACADEMIC TELEMETRY</h2>
+            </div>
+            
+            <div id="solar-info" class="data-vertical">
+                <div class="data-card">
+                    <label>PLANETARY MECHANICS</label>
+                    <p style="font-size: 13px; color: var(--color-text-secondary); margin-top: 10px;">
+                        케플러의 제3법칙($P^2 \propto a^3$)에 따라 행성의 공전 주기는 태양으로부터의 거리에 비례합니다. 수성은 가장 빠르게, 해왕성은 가장 느리게 공전합니다.
+                    </p>
+                </div>
+                <div class="data-card" style="margin-top: 15px;">
+                    <label>CURRENT SIMULATION DATE</label>
+                    <span id="sim-date" class="mono-data special-text" style="font-size: 20px;">Day 0</span>
+                </div>
+            </div>
+
+            <div id="eclipse-info" class="data-vertical" style="display: none;">
+                <div class="data-card">
+                    <label>ECLIPSE GEOMETRY</label>
+                    <p id="eclipse-desc" style="font-size: 13px; color: var(--color-text-secondary); margin-top: 10px;">
+                        개기일식은 달이 지구와 태양 사이에 완벽히 정렬되며, 달의 본그림자(Umbra)가 지표면에 닿을 때 발생합니다.
+                    </p>
+                </div>
+                <div class="data-card" style="margin-top: 15px;">
+                    <label>OBSCURATION RATIO</label>
+                    <span id="obscuration-val" class="mono-data special-text" style="font-size: 24px; color: #ff4d4d;">100.0%</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HAFS Deep Space Navigator V4.0</title>
+    <title>HAFS Deep Space Navigator & Black Hole Engine</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     
@@ -19,7 +19,7 @@
             <div class="hafs-logo">HAFS</div>
             <div class="title-group">
                 <h1>DEEP SPACE NAVIGATOR</h1>
-                <p>Macro-to-Micro Universe Explorer (JWST Data based)</p>
+                <p>Macro-to-Micro Universe & Event Horizon Explorer</p>
             </div>
             <div class="system-status">
                 <span class="status-dot"></span> <span id="status-text">WARP DRIVE READY</span>
@@ -39,6 +39,11 @@
             <button class="target-btn active" data-target="home">
                 <span class="btn-title">MILKY WAY (우리은하)</span>
                 <span class="btn-dist">Distance: 0 Light Years</span>
+            </button>
+            <!-- [신규] 블랙홀 타겟 추가 -->
+            <button class="target-btn" data-target="sgra" style="border-left-color: #ff3366;">
+                <span class="btn-title" style="color: #ff3366;">SAGITTARIUS A* (초거대 블랙홀)</span>
+                <span class="btn-dist">Distance: 26,000 Light Years</span>
             </button>
             <button class="target-btn" data-target="carina">
                 <span class="btn-title">CARINA NEBULA (용골자리 성운)</span>
@@ -60,10 +65,38 @@
         <h2 id="info-title" style="color: var(--color-jwst-gold);">TARGET INFO</h2>
         <p id="info-desc" class="hud-desc" style="margin-bottom: 15px;">설명</p>
         
-        <h3 style="font-family: var(--font-data); font-size: 12px; border-bottom: 1px solid #555; padding-bottom: 5px; margin-bottom: 10px;">SUB-SYSTEMS (내부 구조)</h3>
-        <ul id="sub-systems-list" class="sub-list">
-            <!-- JS에서 동적으로 내부 계(System) 정보가 추가됩니다 -->
-        </ul>
+        <!-- 일반 천체용 하부 구조 리스트 -->
+        <div id="normal-info">
+            <h3 style="font-family: var(--font-data); font-size: 12px; border-bottom: 1px solid #555; padding-bottom: 5px; margin-bottom: 10px;">SUB-SYSTEMS (내부 구조)</h3>
+            <ul id="sub-systems-list" class="sub-list"></ul>
+        </div>
+
+        <!-- [신규] 블랙홀 전용 물리 엔진 컨트롤 (도약 시 동적 표시) -->
+        <div id="bh-controls" style="display: none;">
+            <h3 style="font-family: var(--font-data); font-size: 12px; border-bottom: 1px solid #ff3366; padding-bottom: 5px; margin-bottom: 15px; color: #ff3366;">EVENT HORIZON PHYSICS</h3>
+            
+            <div class="control-group">
+                <label style="font-size: 11px; color: var(--color-text-secondary); display:block; margin-bottom:5px;">블랙홀 질량 모델링 ($M_\odot$)</label>
+                <input type="range" id="bh-mass" min="1" max="50" value="10" step="0.1" style="width:100%; accent-color:#ff3366;">
+                <span id="bh-mass-val" class="mono-data" style="font-size: 12px;">10.0 태양 질량</span>
+            </div>
+            <div class="control-group" style="margin-top:15px;">
+                <label style="font-size: 11px; color: var(--color-text-secondary); display:block; margin-bottom:5px;">관측자 안전 거리 (시간 지연 계산)</label>
+                <input type="range" id="bh-dist" min="50" max="300" value="150" step="1" style="width:100%; accent-color:#ff3366;">
+                <span id="bh-dist-val" class="mono-data" style="font-size: 12px;">150 $R_s$</span>
+            </div>
+
+            <div class="telemetry-box" style="margin-top: 15px; background: rgba(255, 51, 102, 0.1); border: 1px solid rgba(255, 51, 102, 0.3); padding: 15px; border-radius: 4px;">
+                <div class="telemetry-row">
+                    <span>SCHWARZSCHILD RADIUS</span>
+                    <span id="bh-rs" class="mono-data">-- km</span>
+                </div>
+                <div class="telemetry-row">
+                    <span>TIME DILATION ($\gamma$)</span>
+                    <span id="bh-time" class="mono-data" style="color: #ff3366; font-size: 14px;">--</span>
+                </div>
+            </div>
+        </div>
         
         <div class="telemetry-box" style="margin-top: 20px;">
             <div class="telemetry-row">

@@ -1,6 +1,4 @@
-/* =========================================
-   HAFS Deep Space Navigator Style Guide
-   ========================================= */
+/* 제공하신 CSS 원본 그대로 사용합니다 */
 :root {
     --color-bg-main: #02050a; 
     --color-text-primary: #e0e1dd;
@@ -30,10 +28,8 @@ header {
 .status-dot { display: inline-block; width: 10px; height: 10px; background-color: var(--color-status-green); border-radius: 50%; box-shadow: 0 0 10px var(--color-status-green); margin-right: 5px; }
 #status-text { color: var(--color-status-green); font-weight: bold; }
 
-/* 3D 캔버스 전체 화면 */
 .fullscreen-viz { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; }
 
-/* HUD 패널 공통 */
 .hud-panel {
     position: absolute; bottom: 40px; z-index: 10;
     background: var(--color-hud-bg);
@@ -47,9 +43,9 @@ header {
 .hud-desc { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
 
 .left-hud { left: 40px; }
-.right-hud { right: 40px; width: 400px; }
+/* 우측 패널 스크롤 추가 */
+.right-hud { right: 40px; width: 400px; max-height: 85vh; overflow-y: auto; }
 
-/* 타겟 버튼 리스트 */
 .target-list { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
 .target-btn {
     background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
@@ -62,7 +58,6 @@ header {
 .btn-title { font-family: var(--font-data); font-weight: bold; font-size: 14px; color: var(--color-text-primary); }
 .btn-dist { font-size: 11px; color: var(--color-accent-gold); }
 
-/* 내부 구조 리스트 */
 .sub-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
 .sub-list li { background: rgba(0,0,0,0.4); padding: 10px; border-radius: 4px; border-left: 2px solid var(--color-jwst-gold); }
 .sub-title { display: block; font-weight: bold; font-size: 13px; color: #fff; margin-bottom: 3px; }

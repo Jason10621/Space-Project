@@ -1,70 +1,72 @@
 /* =========================================
-   HAFS Grand Orbital Watch V3.0 Style Guide
+   HAFS Deep Space Navigator Style Guide
    ========================================= */
 :root {
-    --color-bg-main: #060d1a; 
-    --color-panel-bg: #0d1b2a;
+    --color-bg-main: #02050a; 
     --color-text-primary: #e0e1dd;
-    --color-text-secondary: #778da9;
-    --color-accent-gold: #e5a93d;
+    --color-text-secondary: #8892b0;
+    --color-accent-gold: #d4af37;
+    --color-jwst-gold: #ffd700;
     --color-status-green: #00ffcc; 
-    --color-jwst-red: #ff3366;
+    --color-hud-bg: rgba(10, 20, 35, 0.75);
     --font-heading: 'Playfair Display', serif; 
     --font-data: 'Roboto Mono', monospace;     
-    --border-style: 1px solid rgba(229, 169, 61, 0.2);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { background-color: var(--color-bg-main); color: var(--color-text-primary); font-family: 'Roboto', sans-serif; overflow: hidden; }
 
-header { background-color: var(--color-panel-bg); padding: 15px 40px; border-bottom: 2px solid var(--color-accent-gold); display: flex; justify-content: center; }
+header { 
+    position: absolute; top: 0; left: 0; width: 100%; z-index: 100;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+    padding: 20px 40px; display: flex; justify-content: center; pointer-events: none;
+}
 .header-container { width: 95%; display: flex; justify-content: space-between; align-items: center; }
 .hafs-logo { font-family: var(--font-heading); font-size: 32px; color: var(--color-accent-gold); border: 2px solid var(--color-accent-gold); padding: 5px 15px; }
-.title-group h1 { font-family: var(--font-heading); font-size: 24px; letter-spacing: 1px; }
+.title-group h1 { font-family: var(--font-heading); font-size: 24px; letter-spacing: 2px; }
 .title-group p { font-size: 14px; color: var(--color-text-secondary); }
 
-.target-selector { display: flex; flex-direction: column; align-items: center; background-color: var(--color-bg-main); padding: 10px 15px; border-radius: 4px; border: var(--border-style); }
-.target-selector label { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 5px; }
-#sim-mode { background-color: var(--color-panel-bg); color: var(--color-accent-gold); border: 1px solid var(--color-accent-gold); padding: 5px; font-family: var(--font-data); font-weight: bold; border-radius: 4px; outline: none; cursor: pointer; }
+.system-status { font-family: var(--font-data); font-size: 14px; }
+.status-dot { display: inline-block; width: 10px; height: 10px; background-color: var(--color-status-green); border-radius: 50%; box-shadow: 0 0 10px var(--color-status-green); margin-right: 5px; }
+#status-text { color: var(--color-status-green); font-weight: bold; }
 
-.system-status { font-family: var(--font-data); font-size: 14px; text-align: right; }
-.status-dot { display: inline-block; width: 10px; height: 10px; background-color: var(--color-status-green); border-radius: 50%; box-shadow: 0 0 10px var(--color-status-green); margin-right: 5px;}
-#mode-name-display { font-weight: bold; color: var(--color-status-green); }
+/* 3D 캔버스 전체 화면 */
+.fullscreen-viz { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; }
 
-.dashboard-grid {
-    display: grid; width: 95%; margin: 30px auto; gap: 20px;
-    grid-template-areas: "ctrl map info";
-    grid-template-columns: 300px 1fr 300px;
-    height: calc(100vh - 150px);
+/* HUD 패널 공통 */
+.hud-panel {
+    position: absolute; bottom: 40px; z-index: 10;
+    background: var(--color-hud-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 8px; padding: 25px; width: 350px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    transition: opacity 0.5s ease;
 }
+.hud-panel h2 { font-family: var(--font-heading); font-size: 18px; color: var(--color-text-primary); margin-bottom: 5px; }
+.hud-desc { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
 
-.panel { background-color: var(--color-panel-bg); border: var(--border-style); border-radius: 4px; padding: 20px; box-shadow: 0 10px 30px -15px rgba(0,0,0,0.8); display: flex; flex-direction: column;}
-.panel-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(136, 146, 176, 0.2); padding-bottom: 10px; margin-bottom: 20px; }
-.panel-header h2 { font-family: var(--font-heading); font-size: 16px; color: var(--color-accent-gold); }
+.left-hud { left: 40px; }
+.right-hud { right: 40px; width: 400px; }
 
-.mono-data { font-family: var(--font-data); font-weight: bold; color: var(--color-accent-gold); display: block; margin-top: 5px;}
+/* 타겟 버튼 리스트 */
+.target-list { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+.target-btn {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    padding: 15px; border-radius: 4px; cursor: pointer; text-align: left;
+    transition: all 0.3s ease; display: flex; flex-direction: column; gap: 5px;
+}
+.target-btn:hover { background: rgba(212, 175, 55, 0.1); border-color: var(--color-accent-gold); }
+.target-btn.active { background: rgba(0, 255, 204, 0.1); border-color: var(--color-status-green); border-left: 4px solid var(--color-status-green); }
 
-.map-panel { grid-area: map; padding: 10px; overflow: hidden; }
-.viz-container { flex-grow: 1; border-radius: 4px; width: 100%; height: 100%; position: relative; background-color: #000; }
+.btn-title { font-family: var(--font-data); font-weight: bold; font-size: 14px; color: var(--color-text-primary); }
+.btn-dist { font-size: 11px; color: var(--color-accent-gold); }
 
-.control-panel { grid-area: ctrl; overflow-y: auto; }
-.info-panel { grid-area: info; }
+/* 내부 구조 리스트 */
+.sub-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.sub-list li { background: rgba(0,0,0,0.4); padding: 10px; border-radius: 4px; border-left: 2px solid var(--color-jwst-gold); }
+.sub-title { display: block; font-weight: bold; font-size: 13px; color: #fff; margin-bottom: 3px; }
+.sub-detail { font-size: 11px; color: var(--color-text-secondary); line-height: 1.4; }
 
-.control-group label { display: block; font-size: 12px; color: var(--color-text-secondary); margin-bottom: 5px; }
-.control-group input[type="range"] { width: 100%; margin-bottom: 5px; accent-color: var(--color-accent-gold); }
-.control-group select { width: 100%; background-color: var(--color-bg-main); color: var(--color-text-primary); border: 1px solid var(--color-text-secondary); padding: 5px; border-radius: 4px; margin-bottom: 10px;}
-
-.theme-btn { background: none; border: 1px solid var(--color-accent-gold); color: var(--color-accent-gold); padding: 8px 10px; font-family: var(--font-data); cursor: pointer; border-radius: 4px; transition: 0.3s; }
-.theme-btn:hover { background-color: var(--color-accent-gold); color: var(--color-panel-bg); }
-
-.data-card { background-color: var(--color-bg-main); padding: 15px; border-radius: 4px; border: var(--border-style); }
-.data-card label { display: block; font-size: 12px; color: var(--color-text-secondary); margin-bottom: 5px; font-weight: bold;}
-.special-data-card { background-color: rgba(212, 175, 55, 0.1); border: 1px solid var(--color-accent-gold); padding: 20px; border-radius: 4px; }
-.special-text { font-size: 24px; color: var(--color-status-green) !important; }
-
-/* JWST 관측용 십자선 오버레이 */
-.crosshair-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
-.ch-line { position: absolute; background-color: rgba(255, 51, 102, 0.5); }
-.ch-h { width: 100%; height: 1px; top: 50%; left: 0; }
-.ch-v { width: 1px; height: 100%; top: 0; left: 50%; }
-.ch-target { position: absolute; top: 52%; left: 51%; color: var(--color-jwst-red); font-family: var(--font-data); font-size: 12px; text-shadow: 0 0 5px #000; }
+.telemetry-row { display: flex; justify-content: space-between; font-size: 11px; color: var(--color-text-secondary); padding: 5px 0; border-bottom: 1px dotted rgba(255,255,255,0.1); }
+.mono-data { font-family: var(--font-data); color: var(--color-status-green); font-weight: bold; }

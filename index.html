@@ -3,115 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HAFS Grand Orbital Watch</title>
+    <title>HAFS Grand Orbital Watch V3.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     
+    <!-- Three.js 코어 및 궤도 컨트롤러 -->
     <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
     <script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
-<body class="dark-mode"> <header>
+<body class="dark-mode">
+    
+    <header>
         <div class="header-container">
             <div class="hafs-logo">HAFS</div>
             <div class="title-group">
-                <h1>GRAND ORBITAL WATCH</h1>
-                <p>Integrated Astronomical Phenomena Simulator</p>
+                <h1>GRAND ORBITAL WATCH V3.0</h1>
+                <p>Unified 3D Astrophysical Engine & JWST Observatory</p>
             </div>
             
             <div class="target-selector">
-                <label for="sim-mode">SIMULATION MODE:</label>
+                <label for="sim-mode">SIMULATION MODE</label>
                 <select id="sim-mode">
-                    <option value="solar-system">태양계 오비탈 탐사 (3D)</option>
-                    <option value="eclipse">정밀 일식 모델링 (2D)</option>
+                    <option value="solar">O1. 태양계 오비탈 탐사 (Solar System)</option>
+                    <option value="eclipse">O2. 3D 일식/월식 시뮬레이터 (Eclipses)</option>
+                    <option value="jwst">O3. JWST 심우주 관측소 (Deep Space)</option>
                 </select>
             </div>
 
             <div class="system-status">
-                <span class="status-dot"></span> <span id="mode-name-display">SOLAR SYSTEM ACTIVE</span>
+                <span class="status-dot"></span> <span id="mode-name-display">ENGINE LIVE</span>
             </div>
         </div>
     </header>
 
     <main class="dashboard-grid">
         
+        <!-- 좌측: 시뮬레이션 제어 패널 -->
         <section class="panel control-panel">
-            <div class="panel-header">
-                <h2>O1. SIMULATION CONTROLS</h2>
-            </div>
+            <div class="panel-header"><h2>O1. PHYSICS CONTROLS</h2></div>
             
-            <div id="solar-controls" class="control-group">
-                <label>시뮬레이션 속도 (Days/Sec)</label>
-                <input type="range" id="speed-slider" min="0" max="100" value="10">
-                <span id="speed-val" class="mono-data">10 days/s</span>
+            <!-- [모드 1] 태양계 컨트롤 -->
+            <div id="controls-solar" class="control-group">
+                <label>시뮬레이션 배속 (Time Dilation)</label>
+                <input type="range" id="solar-speed" min="0" max="200" value="20">
+                <span id="solar-speed-val" class="mono-data">20x</span>
+            </div>
+
+            <!-- [모드 2] 일식/월식 컨트롤 (수정 및 연동 완료) -->
+            <div id="controls-eclipse" class="control-group" style="display: none;">
+                <label>달 궤도 평면 Z축 오프셋 (부분일식/개기일식 조절)</label>
+                <input type="range" id="eclipse-offset" min="-10" max="10" value="0" step="0.1">
+                <span id="eclipse-offset-val" class="mono-data">Perfect Alignment (0.0)</span>
                 
-                <label style="margin-top: 15px;">카메라 시점 관측</label>
-                <select id="camera-view">
-                    <option value="top">전체 태양계 조감도 (Top-down)</option>
-                    <option value="earth">지구 중심 관측 (Geocentric)</option>
-                    <option value="sun">태양 표면 근접 (Heliocentric)</option>
+                <label style="margin-top: 15px;">달-지구 거리 (금환일식 조절)</label>
+                <input type="range" id="eclipse-dist" min="20" max="50" value="30" step="1">
+                <span id="eclipse-dist-val" class="mono-data">384,000 km</span>
+            </div>
+
+            <!-- [모드 3] JWST 컨트롤 -->
+            <div id="controls-jwst" class="control-group" style="display: none;">
+                <label>JWST 관측 타겟 스캔</label>
+                <select id="jwst-target">
+                    <option value="carina">용골자리 성운 (Carina Nebula)</option>
+                    <option value="stephan">스테판의 오중주 (Stephan's Quintet)</option>
+                    <option value="smacs">SMACS 0723 (Deep Field)</option>
                 </select>
-            </div>
-
-            <div id="eclipse-controls" class="control-group" style="display: none;">
-                <label>일식 기하학 유형 설정</label>
-                <div class="radio-group">
-                    <input type="radio" id="type-total" name="eclipse-type" value="total" checked>
-                    <label for="type-total">개기일식 (Total)</label><br>
-                    <input type="radio" id="type-annular" name="eclipse-type" value="annular">
-                    <label for="type-annular">금환일식 (Annular)</label><br>
-                    <input type="radio" id="type-partial" name="eclipse-type" value="partial">
-                    <label for="type-partial">부분일식 (Partial)</label>
-                </div>
-                
-                <label style="margin-top: 15px;">지구-달 거리 제어 (원/근지점)</label>
-                <input type="range" id="moon-dist-slider" min="360" max="405" value="384">
-                <span id="moon-dist-val" class="mono-data">384,000 km</span>
+                <button id="btn-scan" class="theme-btn" style="width: 100%; margin-top: 10px;">▶ 관측 장비 정렬 (Slew Telescope)</button>
             </div>
         </section>
 
-        <section class="panel map-panel">
-            <div class="panel-header">
-                <h2>O2. VISUALIZATION CANVAS</h2>
-            </div>
+        <!-- 중앙: 3D 메인 캔버스 -->
+        <section class="panel map-panel" style="position: relative;">
+            <div class="panel-header"><h2>O2. UNIFIED 3D CANVAS</h2></div>
             <div id="three-container" class="viz-container"></div>
-            <div id="d3-container" class="viz-container" style="display: none; background-color: #050a15;"></div>
+            <!-- JWST 모드용 십자선 오버레이 -->
+            <div id="crosshair" class="crosshair-overlay" style="display:none;">
+                <div class="ch-line ch-h"></div><div class="ch-line ch-v"></div>
+                <div class="ch-target">NIRCam Active</div>
+            </div>
         </section>
 
+        <!-- 우측: 텔레메트리 및 데이터 -->
         <section class="panel info-panel">
-            <div class="panel-header">
-                <h2>O3. ACADEMIC TELEMETRY</h2>
-            </div>
+            <div class="panel-header"><h2>O3. ACADEMIC DATA</h2></div>
             
-            <div id="solar-info" class="data-vertical">
+            <div id="info-content" class="data-vertical">
                 <div class="data-card">
-                    <label>PLANETARY MECHANICS</label>
-                    <p style="font-size: 13px; color: var(--color-text-secondary); margin-top: 10px;">
-                        케플러의 제3법칙($P^2 \propto a^3$)에 따라 행성의 공전 주기는 태양으로부터의 거리에 비례합니다. 수성은 가장 빠르게, 해왕성은 가장 느리게 공전합니다.
+                    <label id="info-title">SYSTEM STATUS</label>
+                    <p id="info-desc" style="font-size: 13px; color: var(--color-text-secondary); margin-top: 10px;">
+                        초기화 중입니다...
                     </p>
                 </div>
-                <div class="data-card" style="margin-top: 15px;">
-                    <label>CURRENT SIMULATION DATE</label>
-                    <span id="sim-date" class="mono-data special-text" style="font-size: 20px;">Day 0</span>
-                </div>
-            </div>
-
-            <div id="eclipse-info" class="data-vertical" style="display: none;">
-                <div class="data-card">
-                    <label>ECLIPSE GEOMETRY</label>
-                    <p id="eclipse-desc" style="font-size: 13px; color: var(--color-text-secondary); margin-top: 10px;">
-                        개기일식은 달이 지구와 태양 사이에 완벽히 정렬되며, 달의 본그림자(Umbra)가 지표면에 닿을 때 발생합니다.
-                    </p>
-                </div>
-                <div class="data-card" style="margin-top: 15px;">
-                    <label>OBSCURATION RATIO</label>
-                    <span id="obscuration-val" class="mono-data special-text" style="font-size: 24px; color: #ff4d4d;">100.0%</span>
+                <div class="special-data-card" style="margin-top: 15px;">
+                    <label id="metric-title">MAIN METRIC</label>
+                    <span id="metric-val" class="mono-data special-text" style="font-size: 20px;">--</span>
                 </div>
             </div>
         </section>
 
     </main>
-
     <script src="script.js"></script>
 </body>
 </html>

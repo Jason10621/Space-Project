@@ -1,12 +1,13 @@
-/* 제공하신 CSS 원본 그대로 사용합니다 */
+/* =========================================
+   HAFS Grand Observatory - Master Style Guide
+   ========================================= */
 :root {
-    --color-bg-main: #02050a; 
+    --color-bg-main: #010308; 
     --color-text-primary: #e0e1dd;
     --color-text-secondary: #8892b0;
     --color-accent-gold: #d4af37;
-    --color-jwst-gold: #ffd700;
     --color-status-green: #00ffcc; 
-    --color-hud-bg: rgba(10, 20, 35, 0.75);
+    --color-hud-bg: rgba(8, 12, 20, 0.85);
     --font-heading: 'Playfair Display', serif; 
     --font-data: 'Roboto Mono', monospace;     
 }
@@ -14,54 +15,88 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { background-color: var(--color-bg-main); color: var(--color-text-primary); font-family: 'Roboto', sans-serif; overflow: hidden; }
 
-header { 
-    position: absolute; top: 0; left: 0; width: 100%; z-index: 100;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
-    padding: 20px 40px; display: flex; justify-content: center; pointer-events: none;
-}
-.header-container { width: 95%; display: flex; justify-content: space-between; align-items: center; }
-.hafs-logo { font-family: var(--font-heading); font-size: 32px; color: var(--color-accent-gold); border: 2px solid var(--color-accent-gold); padding: 5px 15px; }
-.title-group h1 { font-family: var(--font-heading); font-size: 24px; letter-spacing: 2px; }
-.title-group p { font-size: 14px; color: var(--color-text-secondary); }
-
-.system-status { font-family: var(--font-data); font-size: 14px; }
-.status-dot { display: inline-block; width: 10px; height: 10px; background-color: var(--color-status-green); border-radius: 50%; box-shadow: 0 0 10px var(--color-status-green); margin-right: 5px; }
-#status-text { color: var(--color-status-green); font-weight: bold; }
-
+/* 3D 캔버스 & 글로벌 헤더 */
 .fullscreen-viz { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; }
+.global-header { position: absolute; top: 0; left: 0; width: 100%; z-index: 100; padding: 20px 40px; background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent); pointer-events: none; }
+.header-container { width: 95%; display: flex; justify-content: space-between; align-items: center; margin: 0 auto; pointer-events: auto;}
+.hafs-logo { font-family: var(--font-heading); font-size: 28px; color: var(--color-accent-gold); border: 2px solid var(--color-accent-gold); padding: 5px 15px; }
+.title-group { text-align: center; }
+.title-group h1 { font-family: var(--font-heading); font-size: 22px; letter-spacing: 2px; }
+.title-group p { font-size: 12px; color: var(--color-text-secondary); }
 
-.hud-panel {
-    position: absolute; bottom: 40px; z-index: 10;
-    background: var(--color-hud-bg);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(212, 175, 55, 0.3);
-    border-radius: 8px; padding: 25px; width: 350px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-    transition: opacity 0.5s ease;
+.theme-btn { background: rgba(0,0,0,0.5); border: 1px solid var(--color-text-secondary); color: var(--color-text-primary); padding: 10px 15px; font-family: var(--font-data); font-size: 12px; cursor: pointer; border-radius: 4px; transition: 0.3s; font-weight: bold;}
+.theme-btn:hover { background: rgba(255,255,255,0.1); border-color: #fff !important; color: #fff;}
+
+/* =========================================
+   [0] LOBBY 화면 스타일
+   ========================================= */
+.lobby-container {
+    position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 50;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    background: rgba(1, 3, 8, 0.85); backdrop-filter: blur(10px); transition: opacity 0.5s ease;
 }
-.hud-panel h2 { font-family: var(--font-heading); font-size: 18px; color: var(--color-text-primary); margin-bottom: 5px; }
-.hud-desc { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
+.welcome-text { text-align: center; margin-bottom: 50px; }
+.welcome-text h2 { font-family: var(--font-heading); font-size: 36px; color: var(--color-accent-gold); margin-bottom: 10px; }
+.welcome-text p { color: var(--color-text-secondary); font-size: 16px; }
 
-.left-hud { left: 40px; }
-/* 우측 패널 스크롤 추가 */
+.module-cards { display: flex; gap: 40px; max-width: 1000px; width: 90%; }
+.module-card {
+    flex: 1; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px; overflow: hidden; cursor: pointer; transition: all 0.4s ease; position: relative;
+}
+.module-card:hover { transform: translateY(-10px); border-color: var(--color-accent-gold); box-shadow: 0 15px 40px rgba(0,0,0,0.8); }
+.module-card .card-bg { height: 200px; background-size: cover; background-position: center; border-bottom: 1px solid rgba(255,255,255,0.1); transition: 0.4s; }
+.module-card:hover .card-bg { filter: brightness(1.2) contrast(1.1); }
+.card-content { padding: 30px; }
+.module-tag { font-family: var(--font-data); font-size: 10px; font-weight: bold; border: 1px solid; padding: 3px 8px; border-radius: 12px; display: inline-block; margin-bottom: 15px; }
+.card-content h3 { font-family: var(--font-heading); font-size: 22px; margin-bottom: 15px; }
+.card-content p { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; margin-bottom: 25px; height: 60px; }
+.launch-text { font-family: var(--font-data); font-size: 12px; font-weight: bold; color: var(--color-accent-gold); opacity: 0; transition: 0.3s; transform: translateX(-10px); display: inline-block;}
+.module-card:hover .launch-text { opacity: 1; transform: translateX(0); }
+
+/* =========================================
+   [1 & 2] 공통 모듈 HUD 스타일
+   ========================================= */
+.module-ui { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none;}
+.hud-panel {
+    position: absolute; bottom: 40px; pointer-events: auto; background: var(--color-hud-bg); backdrop-filter: blur(10px);
+    border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 8px; padding: 25px; width: 350px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.9); transition: opacity 0.5s ease;
+}
+.hud-panel h2 { font-family: var(--font-heading); font-size: 18px; margin-bottom: 5px; }
+.hud-desc { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
+.left-hud { left: 40px; top: 120px; bottom: auto; max-height: calc(100vh - 160px); overflow-y: auto;}
 .right-hud { right: 40px; width: 400px; max-height: 85vh; overflow-y: auto; }
 
-.target-list { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+/* 리스트 버튼 공통 */
+.target-list, .planet-list { display: flex; flex-direction: column; gap: 8px; margin-top: 15px; }
 .target-btn {
-    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-    padding: 15px; border-radius: 4px; cursor: pointer; text-align: left;
-    transition: all 0.3s ease; display: flex; flex-direction: column; gap: 5px;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 12px 15px; border-radius: 4px; cursor: pointer; text-align: left; transition: all 0.3s ease; display: flex; flex-direction: column; gap: 5px; color: #fff;
 }
 .target-btn:hover { background: rgba(212, 175, 55, 0.1); border-color: var(--color-accent-gold); }
 .target-btn.active { background: rgba(0, 255, 204, 0.1); border-color: var(--color-status-green); border-left: 4px solid var(--color-status-green); }
+.btn-title { font-family: var(--font-data); font-weight: bold; font-size: 13px; }
 
-.btn-title { font-family: var(--font-data); font-weight: bold; font-size: 14px; color: var(--color-text-primary); }
-.btn-dist { font-size: 11px; color: var(--color-accent-gold); }
+/* 데이터 표출 영역 공통 */
+.section-title { font-family: var(--font-data); font-size: 12px; border-bottom: 1px solid #555; padding-bottom: 5px; margin-bottom: 10px; color: #fff; margin-top: 15px;}
+.mono-data { font-family: var(--font-data); font-weight: bold; }
+.telemetry-row { display: flex; justify-content: space-between; font-size: 11px; color: var(--color-text-secondary); padding: 6px 0; border-bottom: 1px dotted rgba(255,255,255,0.1); }
+.control-group label { display: block; font-size: 11px; color: var(--color-text-secondary); margin-bottom: 5px; }
+.control-group input[type="range"] { width: 100%; margin-bottom: 5px; }
 
+/* 태양계 과학 데이터 특화 */
+.media-box { width: 100%; height: 160px; background-size: cover; background-position: center; border-radius: 4px; border: 1px solid #444; position: relative; margin-top: 15px;}
+.data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 4px; border-left: 2px solid #64ffda;}
+.data-cell { display: flex; flex-direction: column; gap: 5px; font-size: 10px; color: var(--color-text-secondary);}
+
+.comp-bar { display: flex; height: 14px; border-radius: 4px; overflow: hidden; border: 1px solid #333; margin-top: 10px;}
+.comp-segment { height: 100%; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #000; font-weight: bold; }
+.comp-legend { display: flex; gap: 10px; font-size: 10px; color: #ccc; margin-top: 10px; flex-wrap: wrap;}
+.legend-item { display: flex; align-items: center; gap: 4px; }
+.legend-color { width: 10px; height: 10px; border-radius: 2px; }
+
+/* 심우주 리스트 특화 */
 .sub-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-.sub-list li { background: rgba(0,0,0,0.4); padding: 10px; border-radius: 4px; border-left: 2px solid var(--color-jwst-gold); }
-.sub-title { display: block; font-weight: bold; font-size: 13px; color: #fff; margin-bottom: 3px; }
+.sub-list li { background: rgba(0,0,0,0.4); padding: 10px; border-radius: 4px; border-left: 2px solid var(--color-accent-gold); }
+.sub-title { display: block; font-weight: bold; font-size: 12px; color: #fff; margin-bottom: 3px; }
 .sub-detail { font-size: 11px; color: var(--color-text-secondary); line-height: 1.4; }
-
-.telemetry-row { display: flex; justify-content: space-between; font-size: 11px; color: var(--color-text-secondary); padding: 5px 0; border-bottom: 1px dotted rgba(255,255,255,0.1); }
-.mono-data { font-family: var(--font-data); color: var(--color-status-green); font-weight: bold; }

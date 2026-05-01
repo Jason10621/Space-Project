@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HAFS Grand Observatory V11.0</title>
+    <title>HAFS Grand Observatory V12.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
@@ -34,7 +34,6 @@
             <p>탐구할 우주 스케일을 선택하세요.</p>
         </div>
         <div class="module-cards">
-            <!-- 모듈 1: 심우주 및 블랙홀 -->
             <div class="module-card" data-module="deepspace">
                 <div class="card-bg" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/4/4f/Black_hole_-_Messier_87_crop_max_res.jpg');"></div>
                 <div class="card-content">
@@ -44,7 +43,6 @@
                     <span class="launch-text">▶ LAUNCH ENGINE</span>
                 </div>
             </div>
-            <!-- 모듈 2: 태양계 행성 탐사 -->
             <div class="module-card" data-module="solarsystem">
                 <div class="card-bg" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/e/e2/Jupiter.jpg');"></div>
                 <div class="card-content">
@@ -54,7 +52,6 @@
                     <span class="launch-text">▶ LAUNCH ENGINE</span>
                 </div>
             </div>
-            <!-- 모듈 3: 심우주 탐사선 트래커 -->
             <div class="module-card" data-module="probes">
                 <div class="card-bg" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/6/60/Voyager_spacecraft_model.png'); background-size: contain; background-repeat: no-repeat; background-color: #000;"></div>
                 <div class="card-content">
@@ -122,22 +119,32 @@
     <div id="ui-probes" class="module-ui" style="display: none;">
         <div class="hud-panel left-hud">
             <h2 style="color: #a277ff;">INTERSTELLAR PROBES</h2>
-            <p class="hud-desc">심우주를 항해 중인 탐사선을 추적합니다. (태양 중심 AU 좌표계)</p>
+            <p class="hud-desc">인류를 대신해 심우주를 항해 중인 탐사선을 추적합니다. (태양 중심 AU 좌표계)</p>
             <div id="pr-list" class="planet-list"></div>
             <button id="btn-pr-reset" class="theme-btn" style="width: 100%; margin-top: 15px; border-color: #a277ff;">태양계 외곽 조감도</button>
         </div>
         <div class="hud-panel right-hud" id="pr-info" style="opacity: 0;">
             <h2 id="pr-name" style="color: #a277ff; font-size:24px;">PROBE</h2>
-            <div id="pr-media" class="media-box" style="height: 120px; background-size: contain; background-color: #111;"></div>
+            <div id="pr-media" class="media-box" style="height: 140px; background-size: contain; background-color: #050505;"></div>
+            
+            <div class="data-grid" style="margin-top: 15px; border-left-color: #a277ff;">
+                <div class="data-cell"><span>LAUNCH YEAR</span><span id="pr-launch" class="mono-data" style="color:#fff;">--</span></div>
+                <div class="data-cell"><span>PRIMARY TARGET</span><span id="pr-target" class="mono-data" style="color:#a277ff;">--</span></div>
+            </div>
+
             <p id="pr-desc" class="hud-desc" style="margin-top: 15px; font-weight:bold;">--</p>
             <div id="pr-details" class="detail-box" style="border-left-color: #a277ff;">--</div>
             
-            <h3 class="section-title" style="color: #a277ff; border-bottom-color: #a277ff;">LIVE TELEMETRY</h3>
-            <div class="telemetry-box" style="background: rgba(162, 119, 255, 0.1); border: 1px solid rgba(162, 119, 255, 0.3); padding: 15px; border-radius: 4px;">
-                <div class="telemetry-row"><span>DISTANCE FROM SUN</span><span id="pr-dist" class="mono-data" style="color: #fff;">-- AU</span></div>
+            <h3 class="section-title" style="color: #a277ff; border-bottom-color: #a277ff;">RTG POWER STATUS</h3>
+            <div class="internal-bar" style="border-color: #444; height: 14px; flex-direction: row; background: rgba(0,0,0,0.5);">
+                <div id="pr-power-bar" class="internal-segment" style="background:#a277ff; height:100%; width: 0%; justify-content: flex-start; padding-left: 10px;">0%</div>
+            </div>
+
+            <h3 class="section-title" style="color: #a277ff; border-bottom-color: #a277ff; margin-top: 20px;">LIVE TELEMETRY</h3>
+            <div class="telemetry-box" style="background: rgba(162, 119, 255, 0.05); border: 1px solid rgba(162, 119, 255, 0.2); padding: 15px; border-radius: 4px;">
+                <div class="telemetry-row"><span>DISTANCE FROM SUN (AU)</span><span id="pr-dist" class="mono-data" style="color: #fff; font-size: 13px;">-- AU</span></div>
                 <div class="telemetry-row"><span>CURRENT VELOCITY</span><span id="pr-vel" class="mono-data">-- km/s</span></div>
-                <div class="telemetry-row"><span>LIGHT-TIME DELAY</span><span id="pr-delay" class="mono-data" style="color: #ffaa00;">--</span></div>
-                <div class="telemetry-row"><span>POWER SOURCE (RTG)</span><span id="pr-power" class="mono-data" style="color: #00ffcc;">--</span></div>
+                <div class="telemetry-row"><span>LIGHT-TIME DELAY (통신)</span><span id="pr-delay" class="mono-data" style="color: #ffaa00;">--</span></div>
             </div>
         </div>
     </div>

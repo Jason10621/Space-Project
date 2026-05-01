@@ -7,7 +7,7 @@
 
 const App = { mode: 'lobby', scene: null, camera: null, renderer: null, controls: null };
 
-// --- 1. 천문 대백과사전 데이터베이스 (100% 무삭제 복원) ---
+// --- 1. 천문 대백과사전 데이터베이스 ---
 const DB = {
     deepspace: {
         'home': { name: "MILKY WAY (우리은하)", type: "nebula", coords: new THREE.Vector3(0, 0, 0), color: 0x88bbff, count: 15000, desc: "태양계가 속해 있는 지름 약 10만 광년의 막대 나선 은하입니다.", details: "약 1,000억에서 4,000억 개의 항성으로 이루어져 있습니다.", subs: [{t: "Orion Arm (오리온 팔)", d: "태양계와 지구를 품고 있는 나선팔"}, {t: "Galactic Halo", d: "암흑물질과 구상성단 영역"}] },
@@ -15,7 +15,6 @@ const DB = {
         'carina': { name: "CARINA NEBULA (용골자리 성운)", type: "nebula", coords: new THREE.Vector3(1200, 300, -800), color: 0xff5522, count: 20000, desc: "지구에서 8,500광년 떨어진 거대한 별의 요람입니다.", details: "우리은하에서 가장 활동적이고 거대한 항성 탄생 영역 중 하나입니다.", subs: [{t: "Eta Carinae", d: "폭발 직전의 극대거성 쌍성계"}, {t: "Cosmic Cliffs", d: "우주 절벽"}] },
         'smacs': { name: "SMACS 0723 (중력렌즈 은하단)", type: "nebula", coords: new THREE.Vector3(3500, -2000, -4000), color: 0x5544ff, count: 30000, desc: "JWST가 관측한 최초의 딥 필드 이미지 대상입니다.", details: "거대한 질량으로 시공간을 렌즈처럼 휘게 하여 배경 은하를 확대합니다.", subs: [{t: "Gravitational Lensing Arcs", d: "배경 은하의 빛이 왜곡된 원호"}] }
     },
-    // 태양계 8개 행성 완벽 복원
     solarsystem: [
         { id: "mercury", name: "MERCURY (수성)", r: 1.2, d: 20, speed: 0.047, color: 0xa9a9a9, img: "https://upload.wikimedia.org/wikipedia/commons/4/4a/Mercury_in_true_color.jpg", temp: "430°C", orb: "47.36", desc: "태양과 가장 가까운 암석 행성. 대기가 없어 일교차가 극심합니다.", details: "대기가 거의 없어 우석 충돌 구덩이가 그대로 남아 있습니다.", atm: [{n: "O", p: 42, c: "#a3c2c2"}, {n: "Na", p: 29, c: "#ffdb4d"}, {n: "H2", p: 22, c: "#4da6ff"}], internal: [{n: "규산염 맨틀", p: 20, c: "#b33c00"}, {n: "철 코어", p: 80, c: "#ff6600"}], moons: [] },
         { id: "venus", name: "VENUS (금성)", r: 1.8, d: 30, speed: 0.035, color: 0xeeddcc, img: "https://upload.wikimedia.org/wikipedia/commons/e/e5/Venus-real_color.jpg", temp: "471°C", orb: "35.02", desc: "극단적 온실효과를 지닌 가장 뜨거운 행성입니다.", details: "두꺼운 이산화탄소 대기와 황산 구름으로 덮여 있습니다.", atm: [{n: "CO2", p: 96, c: "#ff6666"}, {n: "N2", p: 3, c: "#c2c2d6"}], internal: [{n: "지각", p: 5, c: "#d4a373"}, {n: "맨틀", p: 65, c: "#a0522d"}, {n: "코어", p: 30, c: "#552500"}], moons: [] },
@@ -26,7 +25,6 @@ const DB = {
         { id: "uranus", name: "URANUS (천왕성)", r: 3.2, d: 165, speed: 0.006, color: 0x66ccff, img: "https://upload.wikimedia.org/wikipedia/commons/3/3d/Uranus2.jpg", temp: "-195°C", orb: "6.81", desc: "자전축이 98도 기울어져 누운 채로 공전하는 얼음 거성.", details: "메탄 가스가 붉은빛을 흡수해 청록색으로 보입니다.", atm: [{n: "H2", p: 83, c: "#4da6ff"}, {n: "He", p: 15, c: "#ffcc99"}, {n: "CH4", p: 2, c: "#66ffcc"}], internal: [{n: "대기(H,He,CH4)", p: 20, c: "#66ccff"}, {n: "얼음 맨틀", p: 60, c: "#3388cc"}, {n: "암석 코어", p: 20, c: "#222222"}], moons: [] },
         { id: "neptune", name: "NEPTUNE (해왕성)", r: 3.0, d: 200, speed: 0.005, color: 0x3333cc, img: "https://upload.wikimedia.org/wikipedia/commons/5/56/Neptune_Full.jpg", temp: "-200°C", orb: "5.43", desc: "초음속 강풍이 부는 태양계 최외곽 얼음 거성.", details: "태양에서 가장 멀리 떨어져 폭력적인 바람이 붑니다.", atm: [{n: "H2", p: 80, c: "#4da6ff"}, {n: "He", p: 19, c: "#ffcc99"}, {n: "CH4", p: 1, c: "#66ffcc"}], internal: [{n: "가스 대기", p: 15, c: "#3333cc"}, {n: "얼음 맨틀", p: 65, c: "#222288"}, {n: "암석 코어", p: 20, c: "#111111"}], moons: [{id:"triton", name:"Triton", r:0.4, d:5, speed:0.04, color:0xaabbcc, desc:"해왕성의 자전과 반대로 공전하는 역행 위성."}] }
     ],
-    // [신규] 심우주 탐사선 데이터 (7개로 대폭 확장)
     probes: [
         { id: "voyager1", name: "VOYAGER 1 (보이저 1호)", launch: "1977", target: "Interstellar", distAU: 162.5, vel: "17.0", img: "https://upload.wikimedia.org/wikipedia/commons/6/60/Voyager_spacecraft_model.png", power: 40, desc: "인류 역사상 지구에서 가장 멀리 떨어진 탐사선.", details: "목성과 토성을 탐사한 후 성간 공간에 진입했습니다. 외계 지적 생명체를 위한 골든 레코드를 싣고 있습니다.", angle: Math.PI / 4 },
         { id: "voyager2", name: "VOYAGER 2 (보이저 2호)", launch: "1977", target: "Outer Planets", distAU: 136.0, vel: "15.3", img: "https://upload.wikimedia.org/wikipedia/commons/6/60/Voyager_spacecraft_model.png", power: 38, desc: "외행성계 그랜드 투어를 완수한 유일한 탐사선.", details: "목성, 토성, 천왕성, 해왕성을 모두 근접 탐사하고 성간 공간으로 나아갔습니다.", angle: Math.PI * 1.8 },
@@ -252,7 +250,7 @@ function ssUpdatePlanetInfo(pData) {
             btn.onclick = () => {
                 document.querySelectorAll('.moon-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active');
                 SSEngine.tracked = SSEngine.moons.find(m => m.id === mData.id);
-                DOM.ssDesc.textContent = `[위성] ${mData.desc}`;
+                DOM.ssDesc.textContent = `[위성 데이터] ${mData.desc}`;
             };
             DOM.ssMoonsList.appendChild(btn);
         });
@@ -274,7 +272,7 @@ function launchProbes() {
     const sun = new THREE.Mesh(new THREE.SphereGeometry(2, 32, 32), new THREE.MeshBasicMaterial({ color: 0xffddaa }));
     App.scene.add(sun); App.scene.add(new THREE.AmbientLight(0xffffff, 0.5));
 
-    // 배경의 행성 공전 궤도 (스케일 비교를 위한 가이드라인: 수성부터 해왕성)
+    // 배경의 행성 공전 궤도 (수성~해왕성 스케일 비교 가이드)
     const refOrbits = [0.39, 0.72, 1.0, 1.52, 5.2, 9.5, 19.2, 30.1]; const scaleAU = 10;
     refOrbits.forEach(r => {
         const orbit = new THREE.Mesh(new THREE.RingGeometry(r*scaleAU - 0.2, r*scaleAU + 0.2, 128), new THREE.MeshBasicMaterial({ color: 0x112233, side: THREE.DoubleSide }));
@@ -288,7 +286,6 @@ function launchProbes() {
         const x = Math.cos(pData.angle) * dist;
         const z = Math.sin(pData.angle) * dist;
         
-        // 탐사선 하이브리드 메쉬 (Core + Antenna Ring)
         const pGroup = new THREE.Group();
         const core = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.2, 1.2), new THREE.MeshBasicMaterial({ color: 0xa277ff, wireframe: true }));
         const dish = new THREE.Mesh(new THREE.RingGeometry(1.5, 2.5, 16), new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, transparent: true, opacity: 0.5 }));
@@ -297,7 +294,6 @@ function launchProbes() {
         pGroup.position.set(x, 0, z);
         App.scene.add(pGroup);
 
-        // 태양부터 이어지는 궤적 라인
         const points = [new THREE.Vector3(0,0,0), new THREE.Vector3(x, 0, z)];
         const lineGeo = new THREE.BufferGeometry().setFromPoints(points);
         const lineMat = new THREE.LineBasicMaterial({ color: 0xa277ff, transparent: true, opacity: 0.3 });
@@ -322,15 +318,13 @@ function prUpdateInfo(pData) {
     DOM.prDesc.textContent = pData.desc; DOM.prDetails.textContent = pData.details;
     DOM.prLaunch.textContent = pData.launch; DOM.prTarget.textContent = pData.target;
     
-    // RTG 파워 바 애니메이션
     DOM.prPowerBar.style.width = `${pData.power}%`;
-    DOM.prPowerBar.textContent = `${pData.power}%`;
-    DOM.prPowerBar.style.background = pData.power > 30 ? "#a277ff" : "#ff3366"; // 낮으면 붉은색 경고
+    DOM.prPowerBar.textContent = pData.power > 0 ? `${pData.power}%` : "OFFLINE";
+    DOM.prPowerBar.style.background = pData.power > 30 ? "#a277ff" : "#ff3366";
 
     DOM.prDist.textContent = `${pData.distAU} AU`;
     DOM.prVel.textContent = `${pData.vel} km/s`;
     
-    // 광속 통신 지연 연산
     const distKm = pData.distAU * 1.496e8; const seconds = distKm / 300000;
     DOM.prDelay.textContent = `${Math.floor(seconds / 3600)}h ${Math.floor((seconds % 3600) / 60)}m`;
 
@@ -338,7 +332,7 @@ function prUpdateInfo(pData) {
 
     const tPos = PREngine.tracked.mesh.position;
     new TWEEN.Tween(App.controls.target).to(tPos, 1500).start();
-    const dirToSun = tPos.clone().normalize().multiplyScalar(-20); // 거리를 더 멀리 띄움
+    const dirToSun = tPos.clone().normalize().multiplyScalar(-20); 
     new TWEEN.Tween(App.camera.position).to(tPos.clone().add(new THREE.Vector3(0, 10, 0)).add(dirToSun), 1500).start();
 }
 
@@ -408,7 +402,6 @@ function animate() {
         }
     }
     else if (App.mode === 'probes') {
-        // 프로브의 그룹을 자전시켜 안테나가 돌아가는 효과 연출
         PREngine.probes.forEach(p => p.mesh.rotation.y += 0.01);
     }
 

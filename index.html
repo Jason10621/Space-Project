@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HAFS Grand Observatory</title>
+    <title>HAFS Grand Observatory V10.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     
@@ -14,96 +14,75 @@
 </head>
 <body class="dark-mode">
 
-    <!-- 글로벌 3D 렌더링 캔버스 -->
     <div id="three-canvas" class="fullscreen-viz"></div>
 
-    <!-- 상단 글로벌 헤더 -->
     <header class="global-header">
         <div class="header-container">
             <div class="hafs-logo">HAFS</div>
             <div class="title-group">
-                <h1>GRAND OBSERVATORY</h1>
-                <p>Integrated Astronomical Simulation Platform</p>
+                <h1>GRAND OBSERVATORY V10.0</h1>
+                <p>Advanced Macro-to-Micro Astrophysics Platform</p>
             </div>
-            <!-- 메인 로비 복귀 버튼 -->
             <button id="btn-return-hub" class="theme-btn" style="display: none; border-color: var(--color-accent-gold);">
                 ◀ RETURN TO MAIN HUB
             </button>
         </div>
     </header>
 
-    <!-- ==========================================
-         [0] MAIN LOBBY (메인 허브 화면)
-         ========================================== -->
+    <!-- [0] MAIN LOBBY -->
     <div id="ui-lobby" class="lobby-container">
         <div class="welcome-text">
             <h2>SELECT EXPLORATION MODULE</h2>
-            <p>HAFS 통합 천문 플랫폼에 오신 것을 환영합니다. 탐구할 모듈을 선택하세요.</p>
+            <p>HAFS 통합 천문 플랫폼입니다. 탐구할 우주 스케일을 선택하세요.</p>
         </div>
-        
         <div class="module-cards">
-            <!-- 모듈 1: 심우주 및 블랙홀 -->
             <div class="module-card" data-module="deepspace">
                 <div class="card-bg" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/4/4f/Black_hole_-_Messier_87_crop_max_res.jpg');"></div>
                 <div class="card-content">
                     <span class="module-tag" style="color: #ff3366; border-color: #ff3366;">MODULE 01</span>
                     <h3>DEEP SPACE & BLACK HOLE</h3>
-                    <p>우리은하, 용골자리 성운, 중력렌즈 은하단을 탐험하고 초거대 블랙홀(Sagittarius A*)의 상대성이론 물리 엔진을 제어합니다.</p>
+                    <p>우리은하, 용골자리 성운 등을 탐험하고 초거대 블랙홀의 상대성이론을 시뮬레이션합니다.</p>
                     <span class="launch-text">▶ LAUNCH ENGINE</span>
                 </div>
             </div>
-
-            <!-- 모듈 2: 태양계 행성 탐사 -->
             <div class="module-card" data-module="solarsystem">
                 <div class="card-bg" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/e/e2/Jupiter.jpg');"></div>
                 <div class="card-content">
                     <span class="module-tag" style="color: #64ffda; border-color: #64ffda;">MODULE 02</span>
-                    <h3>SOLAR SYSTEM EXPLORER</h3>
-                    <p>정밀한 케플러 궤도 역학이 적용된 8개 행성을 추적하고, NASA 관측 데이터와 대기 화학 성분을 분석합니다.</p>
+                    <h3>SOLAR SYSTEM & MOONS</h3>
+                    <p>행성과 위성의 궤도를 추적하고 대기성분, 내부구조, 표면 특징을 심층 분석합니다.</p>
                     <span class="launch-text">▶ LAUNCH ENGINE</span>
                 </div>
             </div>
         </div>
     </div>
 
-
-    <!-- ==========================================
-         [1] DEEP SPACE NAVIGATOR UI (모듈 1)
-         ========================================== -->
+    <!-- [1] DEEP SPACE NAVIGATOR UI -->
     <div id="ui-deepspace" class="module-ui" style="display: none;">
-        <!-- 좌측: 타겟 내비게이터 -->
         <div class="hud-panel left-hud">
             <h2>UNIVERSE MAP</h2>
             <div class="target-list">
-                <button class="target-btn active ds-target" data-target="home">
-                    <span class="btn-title">MILKY WAY (우리은하 전경)</span>
-                </button>
-                <button class="target-btn ds-target" data-target="sgra" style="border-left-color: #ff3366;">
-                    <span class="btn-title" style="color: #ff3366;">SAGITTARIUS A* (초거대 블랙홀)</span>
-                </button>
-                <button class="target-btn ds-target" data-target="carina">
-                    <span class="btn-title">CARINA NEBULA (용골자리 성운)</span>
-                </button>
-                <button class="target-btn ds-target" data-target="smacs">
-                    <span class="btn-title">SMACS 0723 (은하단)</span>
-                </button>
+                <button class="target-btn active ds-target" data-target="home"><span class="btn-title">MILKY WAY (우리은하)</span></button>
+                <button class="target-btn ds-target" data-target="sgra" style="border-left-color: #ff3366;"><span class="btn-title" style="color: #ff3366;">SAGITTARIUS A* (블랙홀)</span></button>
+                <button class="target-btn ds-target" data-target="carina"><span class="btn-title">CARINA NEBULA (용골자리)</span></button>
+                <button class="target-btn ds-target" data-target="smacs"><span class="btn-title">SMACS 0723 (은하단)</span></button>
             </div>
         </div>
 
-        <!-- 우측: 정보 및 블랙홀 물리 엔진 제어기 -->
         <div class="hud-panel right-hud" id="ds-info" style="opacity: 0;">
-            <h2 id="ds-title" style="color: var(--color-accent-gold);">TARGET</h2>
-            <p id="ds-desc" class="hud-desc" style="margin-bottom: 15px;">--</p>
+            <h2 id="ds-title" style="color: var(--color-accent-gold); font-size:22px;">TARGET</h2>
+            <p id="ds-desc" class="hud-desc" style="margin-bottom: 10px;">--</p>
+            <div id="ds-details" class="detail-box">--</div>
             
             <div id="ds-normal-info">
-                <h3 class="section-title">SUB-SYSTEMS (내부 구조)</h3>
+                <h3 class="section-title">SUB-SYSTEMS (주요 구조)</h3>
                 <ul id="ds-sub-list" class="sub-list"></ul>
             </div>
 
             <div id="ds-bh-controls" style="display: none;">
                 <h3 class="section-title" style="color: #ff3366;">EVENT HORIZON PHYSICS</h3>
                 <div class="control-group">
-                    <label>블랙홀 질량 모델링 (Solar Mass)</label>
+                    <label>블랙홀 질량 (Solar Mass)</label>
                     <input type="range" id="bh-mass" min="1" max="50" value="10" step="0.1" style="accent-color:#ff3366;">
                     <span id="bh-mass-val" class="mono-data">10.0</span>
                 </div>
@@ -120,39 +99,43 @@
         </div>
     </div>
 
-
-    <!-- ==========================================
-         [2] SOLAR SYSTEM EXPLORER UI (모듈 2)
-         ========================================== -->
+    <!-- [2] SOLAR SYSTEM EXPLORER UI -->
     <div id="ui-solarsystem" class="module-ui" style="display: none;">
-        <!-- 좌측: 행성 리스트 및 시뮬레이션 제어 -->
         <div class="hud-panel left-hud">
             <h2>PLANETARY TARGETS</h2>
-            <p class="hud-desc">행성을 선택하여 카메라를 동기화하세요.</p>
             <div id="ss-planet-list" class="planet-list"></div>
             
             <div class="control-group" style="margin-top: 20px;">
-                <label>시뮬레이션 배속 (Keplerian Speed)</label>
+                <label>시뮬레이션 배속 (Orbit Speed)</label>
                 <input type="range" id="ss-speed" min="0" max="50" value="10">
                 <span id="ss-speed-val" class="mono-data">10x</span>
             </div>
             <button id="btn-ss-reset" class="theme-btn" style="width: 100%; margin-top: 15px;">전체 조감도로 복귀</button>
         </div>
 
-        <!-- 우측: 행성 과학 데이터 시각화 -->
         <div class="hud-panel right-hud" id="ss-info" style="opacity: 0;">
-            <h2 id="ss-name" style="color: #64ffda;">PLANET</h2>
+            <h2 id="ss-name" style="color: #64ffda; font-size:24px;">PLANET</h2>
             <div id="ss-media" class="media-box"></div>
-            <p id="ss-desc" class="hud-desc" style="margin-top: 15px;">--</p>
+            <p id="ss-desc" class="hud-desc" style="margin-top: 15px; font-weight:bold;">--</p>
+            <div id="ss-details" class="detail-box">--</div>
             
             <div class="data-grid" style="margin-top: 15px;">
                 <div class="data-cell"><span>SURFACE TEMP</span><span id="ss-temp" class="mono-data" style="color:#ffaa00;">--</span></div>
                 <div class="data-cell"><span>ORBIT SPEED</span><span id="ss-orb" class="mono-data">-- km/s</span></div>
             </div>
 
-            <h3 class="section-title" style="margin-top: 20px;">CHEMICAL COMPOSITION</h3>
+            <h3 class="section-title" style="margin-top: 20px;">ATMOSPHERE COMPOSITION (대기 성분)</h3>
             <div id="ss-comp-bar" class="comp-bar"></div>
             <div id="ss-comp-legend" class="comp-legend"></div>
+
+            <h3 class="section-title" style="margin-top: 20px;">INTERNAL STRUCTURE (내부 구조)</h3>
+            <div id="ss-internal-bar" class="internal-bar"></div>
+            <div id="ss-internal-legend" class="comp-legend"></div>
+
+            <div id="ss-moons-container" style="display:none;">
+                <h3 class="section-title" style="margin-top: 20px;">NATURAL SATELLITES (위성 시스템)</h3>
+                <div id="ss-moons-list" class="moon-list"></div>
+            </div>
         </div>
     </div>
 

@@ -1,8 +1,6 @@
 // =======================================================================
-// HAFS Grand Observatory (V11.0 Unabridged Ultimate Engine)
-// MODULE 01: Deep Space & Black Hole
-// MODULE 02: Solar System Explorer
-// MODULE 03: Interstellar Probes
+// HAFS Grand Observatory (V11.0 Unabridged Master Core)
+// Contains: Lobby, Deep Space(BlackHole), Solar System(Moons), Probes
 // =======================================================================
 
 const App = { mode: 'lobby', scene: null, camera: null, renderer: null, controls: null };
@@ -10,25 +8,25 @@ const App = { mode: 'lobby', scene: null, camera: null, renderer: null, controls
 // --- 1. 천문 대백과사전 데이터베이스 ---
 const DB = {
     deepspace: {
-        'home': { name: "MILKY WAY (우리은하)", type: "nebula", coords: new THREE.Vector3(0, 0, 0), color: 0x88bbff, count: 15000, desc: "태양계가 속해 있는 지름 약 10만 광년의 막대 나선 은하입니다.", details: "약 1,000억에서 4,000억 개의 항성으로 이루어져 있습니다.", subs: [{t: "Orion Arm (오리온 팔)", d: "태양계와 지구를 품고 있는 나선팔"}, {t: "Galactic Halo", d: "암흑물질과 구상성단 영역"}] },
+        'home': { name: "MILKY WAY (우리은하)", type: "nebula", coords: new THREE.Vector3(0, 0, 0), color: 0x88bbff, count: 15000, desc: "지름 약 10만 광년의 막대 나선 은하입니다.", details: "태양계는 은하 중심에서 약 26,000광년 떨어진 오리온자리 팔에 위치해 있습니다.", subs: [{t: "Orion Arm (오리온 팔)", d: "태양계가 위치한 나선팔"}, {t: "Galactic Halo", d: "암흑물질과 구상성단 영역"}] },
         'sgra': { name: "SAGITTARIUS A* (초거대 블랙홀)", type: "blackhole", coords: new THREE.Vector3(200, 50, -200), desc: "우리은하 중심의 초대질량 블랙홀입니다. 시공간을 극단적으로 왜곡합니다.", details: "질량은 태양의 약 430만 배에 달하지만, 크기는 수성 궤도보다 작습니다." },
         'carina': { name: "CARINA NEBULA (용골자리 성운)", type: "nebula", coords: new THREE.Vector3(1200, 300, -800), color: 0xff5522, count: 20000, desc: "지구에서 8,500광년 떨어진 거대한 별의 요람입니다.", details: "우리은하에서 가장 활동적이고 거대한 항성 탄생 영역 중 하나입니다.", subs: [{t: "Eta Carinae", d: "폭발 직전의 극대거성 쌍성계"}, {t: "Cosmic Cliffs", d: "우주 절벽"}] },
         'smacs': { name: "SMACS 0723 (중력렌즈 은하단)", type: "nebula", coords: new THREE.Vector3(3500, -2000, -4000), color: 0x5544ff, count: 30000, desc: "JWST가 관측한 최초의 딥 필드 이미지 대상입니다.", details: "거대한 질량으로 시공간을 렌즈처럼 휘게 하여 배경 은하를 확대합니다.", subs: [{t: "Gravitational Lensing Arcs", d: "배경 은하의 빛이 왜곡된 원호"}] }
     },
     solarsystem: [
-        { id: "earth", name: "EARTH (지구)", r: 2.0, d: 40, speed: 0.029, color: 0x3366ff, img: "https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17.jpg", temp: "15°C", orb: "29.78", desc: "액체 상태의 물이 존재하는 생명체 거주 행성.", details: "다이나모 이론에 의한 자기장 형성으로 생명체를 보호합니다.", atm: [{n: "질소(N2)", p: 78, c: "#8892b0"}, {n: "산소(O2)", p: 21, c: "#66ccff"}], internal: [{n: "맨틀", p: 40, c: "#b33c00"}, {n: "외핵", p: 35, c: "#ff6600"}, {n: "내핵", p: 20, c: "#ffcc00"}], moons: [{id:"luna", name:"Luna", r:0.5, d:4, speed:0.08, color:0xaaaaaa, desc:"지구와의 조석 고정(Tidal Locking)으로 항상 같은 면만 보입니다."}] },
-        { id: "mars", name: "MARS (화성)", r: 1.5, d: 55, speed: 0.024, color: 0xff4422, img: "https://upload.wikimedia.org/wikipedia/commons/0/02/OSIRIS_Mars_true_color.jpg", temp: "-63°C", orb: "24.07", desc: "산화철로 붉게 보이며 과거 물이 흘렀던 흔적이 있는 행성.", details: "지구의 1% 수준인 희박한 대기를 가졌습니다.", atm: [{n: "CO2", p: 95, c: "#ff6666"}, {n: "N2", p: 3, c: "#8892b0"}], internal: [{n: "맨틀", p: 60, c: "#993311"}, {n: "코어", p: 30, c: "#551100"}], moons: [{id:"phobos", name:"Phobos", r:0.2, d:2, speed:0.15, color:0x888888, desc:"점점 추락 중인 위성."}, {id:"deimos", name:"Deimos", r:0.15, d:3, speed:0.1, color:0x777777, desc:"작고 어두운 위성."}] },
-        { id: "jupiter", name: "JUPITER (목성)", r: 5.5, d: 85, speed: 0.013, color: 0xdda050, img: "https://upload.wikimedia.org/wikipedia/commons/e/e2/Jupiter.jpg", temp: "-110°C", orb: "13.07", desc: "태양계에서 가장 거대한 가스 행성.", details: "액체 금속 수소 바다가 초강력 자기장을 만들어냅니다.", atm: [{n: "H2", p: 89, c: "#4da6ff"}, {n: "He", p: 10, c: "#ffcc99"}], internal: [{n: "액체 금속 수소", p: 70, c: "#99aacc"}, {n: "암석 코어", p: 15, c: "#444444"}], moons: [{id:"europa", name:"Europa", r:0.35, d:9, speed:0.09, color:0xeeeeee, desc:"얼음 지각 아래 거대한 바다가 존재할 것으로 보입니다."}] },
-        { id: "saturn", name: "SATURN (토성)", r: 4.5, d: 120, speed: 0.009, color: 0xead6b8, img: "https://upload.wikimedia.org/wikipedia/commons/c/c7/Saturn_during_Equinox.jpg", temp: "-140°C", orb: "9.69", desc: "아름다운 고리 시스템을 가진 거대 가스 행성.", details: "밀도가 물보다 낮으며 얼음 조각으로 이루어진 고리가 있습니다.", atm: [{n: "H2", p: 96, c: "#4da6ff"}], internal: [{n: "금속 수소", p: 60, c: "#8899aa"}], hasRing: true, ringColor: 0xeeddcc, ringInner: 1.5, ringOuter: 2.8, moons: [{id:"titan", name:"Titan", r:0.7, d:8, speed:0.05, color:0xffaa55, desc:"짙은 대기와 메탄 호수를 가진 위성입니다."}] }
+        { id: "earth", name: "EARTH (지구)", r: 2.0, d: 40, speed: 0.029, color: 0x3366ff, img: "https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17.jpg", temp: "15°C", orb: "29.78", desc: "액체 상태의 물이 존재하는 유일한 행성.", details: "다이나모 이론에 의한 강력한 자기장으로 생명체를 보호합니다.", atm: [{n: "질소(N2)", p: 78, c: "#8892b0"}, {n: "산소(O2)", p: 21, c: "#66ccff"}], internal: [{n: "지각", p:5, c:"#8b7355"}, {n: "맨틀", p: 40, c: "#b33c00"}, {n: "외핵", p: 35, c: "#ff6600"}, {n: "내핵", p: 20, c: "#ffcc00"}], moons: [{id:"luna", name:"Luna (달)", r:0.5, d:4, speed:0.08, color:0xaaaaaa, desc:"지구와의 조석 고정(Tidal Locking)으로 항상 같은 면만 보입니다."}] },
+        { id: "mars", name: "MARS (화성)", r: 1.5, d: 55, speed: 0.024, color: 0xff4422, img: "https://upload.wikimedia.org/wikipedia/commons/0/02/OSIRIS_Mars_true_color.jpg", temp: "-63°C", orb: "24.07", desc: "산화철로 붉게 보이며 과거 물이 흘렀던 흔적이 있는 행성.", details: "과거에는 두꺼운 대기가 있었으나 현재는 지구의 1% 수준입니다.", atm: [{n: "CO2", p: 95, c: "#ff6666"}, {n: "N2", p: 3, c: "#8892b0"}], internal: [{n: "맨틀", p: 60, c: "#993311"}, {n: "코어", p: 30, c: "#551100"}], moons: [{id:"phobos", name:"Phobos", r:0.2, d:2, speed:0.15, color:0x888888, desc:"불규칙한 감자 모양의 위성."}, {id:"deimos", name:"Deimos", r:0.15, d:3, speed:0.1, color:0x777777, desc:"매우 작고 어두운 위성."}] },
+        { id: "jupiter", name: "JUPITER (목성)", r: 5.5, d: 85, speed: 0.013, color: 0xdda050, img: "https://upload.wikimedia.org/wikipedia/commons/e/e2/Jupiter.jpg", temp: "-110°C", orb: "13.07", desc: "태양계에서 가장 거대한 가스 행성.", details: "액체 금속 수소 바다가 초강력 자기장을 만들어냅니다. 대적점이 특징입니다.", atm: [{n: "H2", p: 89, c: "#4da6ff"}, {n: "He", p: 10, c: "#ffcc99"}], internal: [{n: "액체 금속 수소", p: 70, c: "#99aacc"}, {n: "암석 코어", p: 15, c: "#444444"}], moons: [{id:"io", name:"Io", r:0.4, d:7, speed:0.12, color:0xffff00, desc:"화산 활동이 가장 활발한 천체."}, {id:"europa", name:"Europa", r:0.35, d:9, speed:0.09, color:0xeeeeee, desc:"얼음 지각 아래 거대한 바다가 존재할 것으로 유력시됩니다."}] },
+        { id: "saturn", name: "SATURN (토성)", r: 4.5, d: 120, speed: 0.009, color: 0xead6b8, img: "https://upload.wikimedia.org/wikipedia/commons/c/c7/Saturn_during_Equinox.jpg", temp: "-140°C", orb: "9.69", desc: "아름다운 고리 시스템을 가진 거대 가스 행성.", details: "밀도가 물보다 낮으며 얼음 조각으로 이루어진 고리가 있습니다.", atm: [{n: "H2", p: 96, c: "#4da6ff"}], internal: [{n: "금속 수소", p: 60, c: "#8899aa"}, {n: "암석 코어", p: 20, c: "#333333"}], hasRing: true, ringColor: 0xeeddcc, ringInner: 1.5, ringOuter: 2.8, moons: [{id:"titan", name:"Titan", r:0.7, d:8, speed:0.05, color:0xffaa55, desc:"짙은 대기와 메탄 호수를 가진 위성입니다."}] }
     ],
     probes: [
-        { id: "voyager1", name: "VOYAGER 1 (보이저 1호)", distAU: 162.5, vel: "17.0", img: "https://upload.wikimedia.org/wikipedia/commons/6/60/Voyager_spacecraft_model.png", power: "RTG (Declining)", desc: "인류 역사상 가장 멀리 떨어진 인공 물체입니다.", details: "성간 공간에 진입했으며 외계 지적 생명체를 위한 골든 레코드를 싣고 있습니다.", angle: Math.PI / 4 },
-        { id: "voyager2", name: "VOYAGER 2 (보이저 2호)", distAU: 136.0, vel: "15.3", img: "https://upload.wikimedia.org/wikipedia/commons/6/60/Voyager_spacecraft_model.png", power: "RTG (Declining)", desc: "목, 토, 천, 해왕성을 모두 방문한 탐사선입니다.", details: "성간 공간에 진입한 두 번째 인공 물체입니다.", angle: Math.PI * 1.8 },
-        { id: "newhorizons", name: "NEW HORIZONS (뉴 호라이즌스)", distAU: 58.0, vel: "13.8", img: "https://upload.wikimedia.org/wikipedia/commons/f/fb/New_Horizons_Transparent.png", power: "RTG (Active)", desc: "명왕성과 카이퍼 벨트를 탐사했습니다.", details: "초기 태양계의 비밀을 밝혀내고 있습니다.", angle: Math.PI }
+        { id: "voyager1", name: "VOYAGER 1 (보이저 1호)", distAU: 162.5, vel: "17.0", img: "https://upload.wikimedia.org/wikipedia/commons/6/60/Voyager_spacecraft_model.png", power: "RTG (Declining)", desc: "인류 역사상 가장 멀리 떨어진 인공 물체입니다.", details: "1977년 발사되어 목성과 토성을 탐사한 후 성간 공간에 진입했습니다.", angle: Math.PI / 4 },
+        { id: "voyager2", name: "VOYAGER 2 (보이저 2호)", distAU: 136.0, vel: "15.3", img: "https://upload.wikimedia.org/wikipedia/commons/6/60/Voyager_spacecraft_model.png", power: "RTG (Declining)", desc: "목, 토, 천, 해왕성을 모두 방문한 탐사선입니다.", details: "현재 성간 공간에 진입하여 태양권계면 밖을 탐사 중입니다.", angle: Math.PI * 1.8 },
+        { id: "newhorizons", name: "NEW HORIZONS (뉴 호라이즌스)", distAU: 58.0, vel: "13.8", img: "https://upload.wikimedia.org/wikipedia/commons/f/fb/New_Horizons_Transparent.png", power: "RTG (Active)", desc: "명왕성과 카이퍼 벨트를 탐사했습니다.", details: "인류 최초로 명왕성의 하트 모양 지형과 위성 카론을 선명하게 촬영했습니다.", angle: Math.PI }
     ]
 };
 
-// --- 엔진 물리 메모리 저장소 ---
+// --- 엔진 메모리 ---
 const DSEngine = { objects: {}, bh: { eh: null, ps: null, disk: null, speeds: [], count: 35000 } };
 const SSEngine = { planets: [], moons: [], tracked: null, speedMulti: 1.0 };
 const PREngine = { probes: [], tracked: null };
@@ -37,21 +35,24 @@ const PREngine = { probes: [], tracked: null };
 const DOM = {
     lobby: document.getElementById('ui-lobby'), btnHub: document.getElementById('btn-return-hub'),
     uiDS: document.getElementById('ui-deepspace'), uiSS: document.getElementById('ui-solarsystem'), uiPR: document.getElementById('ui-probes'),
+    
     // DS
     dsTargets: document.querySelectorAll('.ds-target'), dsInfo: document.getElementById('ds-info'), dsTitle: document.getElementById('ds-title'), dsDesc: document.getElementById('ds-desc'), dsDetails: document.getElementById('ds-details'),
     dsNormal: document.getElementById('ds-normal-info'), dsSubList: document.getElementById('ds-sub-list'), dsBHCtrl: document.getElementById('ds-bh-controls'), bhMass: document.getElementById('bh-mass'), bhDist: document.getElementById('bh-dist'),
+    
     // SS
     ssList: document.getElementById('ss-planet-list'), ssSpeed: document.getElementById('ss-speed'), ssBtnReset: document.getElementById('btn-ss-reset'),
     ssInfo: document.getElementById('ss-info'), ssName: document.getElementById('ss-name'), ssMedia: document.getElementById('ss-media'), ssDesc: document.getElementById('ss-desc'), ssDetails: document.getElementById('ss-details'),
     ssTemp: document.getElementById('ss-temp'), ssOrb: document.getElementById('ss-orb'), ssCompBar: document.getElementById('ss-comp-bar'), ssCompLegend: document.getElementById('ss-comp-legend'),
     ssInternalBar: document.getElementById('ss-internal-bar'), ssInternalLegend: document.getElementById('ss-internal-legend'), ssMoonsCont: document.getElementById('ss-moons-container'), ssMoonsList: document.getElementById('ss-moons-list'),
-    // PR
+    
+    // PR (이 변수들이 완벽히 바인딩 되어야 탐사선 모듈이 작동합니다)
     prList: document.getElementById('pr-list'), btnPrReset: document.getElementById('btn-pr-reset'),
     prInfo: document.getElementById('pr-info'), prName: document.getElementById('pr-name'), prMedia: document.getElementById('pr-media'), prDesc: document.getElementById('pr-desc'), prDetails: document.getElementById('pr-details'),
     prDist: document.getElementById('pr-dist'), prVel: document.getElementById('pr-vel'), prDelay: document.getElementById('pr-delay'), prPower: document.getElementById('pr-power')
 };
 
-// ================= [ 글로벌 초기화 및 유틸리티 ] =================
+// ================= [ 글로벌 캔버스 초기화 ] =================
 function initGlobalCore() {
     const container = document.getElementById('three-canvas');
     App.scene = new THREE.Scene();
@@ -248,7 +249,7 @@ function ssUpdatePlanetInfo(pData) {
     DOM.ssInfo.style.opacity = "1";
 }
 
-// ================= [ 6. MODULE 3: INTERSTELLAR PROBES ] =================
+// ================= [ 6. MODULE 3: INTERSTELLAR PROBES (복원됨) ] =================
 function launchProbes() {
     App.mode = 'probes'; clearScene(); App.scene.fog = new THREE.FogExp2(0x010205, 0.0001); 
     
@@ -260,6 +261,7 @@ function launchProbes() {
     const sun = new THREE.Mesh(new THREE.SphereGeometry(2, 32, 32), new THREE.MeshBasicMaterial({ color: 0xffddaa }));
     App.scene.add(sun); App.scene.add(new THREE.AmbientLight(0xffffff, 0.5));
 
+    // 목성, 토성, 천왕성, 해왕성의 공전 궤도선 (스케일 비교용)
     const refOrbits = [5.2, 9.5, 19.2, 30.1]; const scaleAU = 10;
     refOrbits.forEach(r => {
         const orbit = new THREE.Mesh(new THREE.RingGeometry(r*scaleAU - 0.5, r*scaleAU + 0.5, 128), new THREE.MeshBasicMaterial({ color: 0x223344, side: THREE.DoubleSide }));
@@ -273,9 +275,11 @@ function launchProbes() {
         const x = Math.cos(pData.angle) * dist;
         const z = Math.sin(pData.angle) * dist;
         
+        // 탐사선 3D 메쉬 (팔면체)
         const pMesh = new THREE.Mesh(new THREE.OctahedronGeometry(1.5, 0), new THREE.MeshBasicMaterial({ color: 0xa277ff, wireframe: true }));
         pMesh.position.set(x, 0, z); App.scene.add(pMesh);
 
+        // 태양으로부터 뻗어나가는 경로(Line)
         const points = [new THREE.Vector3(0,0,0), new THREE.Vector3(x, 0, z)];
         const lineGeo = new THREE.BufferGeometry().setFromPoints(points);
         const lineMat = new THREE.LineBasicMaterial({ color: 0xa277ff, transparent: true, opacity: 0.3 });
@@ -283,18 +287,20 @@ function launchProbes() {
 
         PREngine.probes.push({ id: pData.id, mesh: pMesh, data: pData });
 
+        // 버튼 생성
         const btn = document.createElement('button'); btn.className = 'target-btn pr-target';
         btn.innerHTML = `<span class="btn-title" style="color:#a277ff;">${pData.name}</span>`;
         btn.onclick = () => {
             document.querySelectorAll('.pr-target').forEach(b => b.classList.remove('active')); btn.classList.add('active');
             PREngine.tracked = PREngine.probes.find(p => p.id === pData.id);
-            prUpdateInfo(pData);
+            prUpdateInfo(pData); // 누락되었던 핵심 함수 호출!
         };
         DOM.prList.appendChild(btn);
     });
     App.camera.position.set(0, 500, 800); App.controls.target.set(0, 0, 0);
 }
 
+// [핵심 복원] 탐사선 데이터 시각화 및 카메라 트래킹 로직
 function prUpdateInfo(pData) {
     DOM.prName.textContent = pData.name; DOM.prMedia.style.backgroundImage = `url('${pData.img}')`; 
     DOM.prDesc.textContent = pData.desc; DOM.prDetails.textContent = pData.details;
@@ -302,18 +308,24 @@ function prUpdateInfo(pData) {
     DOM.prVel.textContent = `${pData.vel} km/s`;
     DOM.prPower.textContent = pData.power;
     
+    // Light-Time Delay (거리 ÷ 빛의 속도 30만km/s)
     const distKm = pData.distAU * 1.496e8; const seconds = distKm / 300000;
     DOM.prDelay.textContent = `${Math.floor(seconds / 3600)} Hours ${Math.floor((seconds % 3600) / 60)} Mins`;
 
     DOM.prInfo.style.opacity = "1";
 
+    // 카메라가 탐사선으로 날아감 (트래킹)
     const tPos = PREngine.tracked.mesh.position;
     new TWEEN.Tween(App.controls.target).to(tPos, 1500).start();
+    
+    // 탐사선 뒤에서 태양(중심)을 바라보는 시네마틱 뷰포트
     const dirToSun = tPos.clone().normalize().multiplyScalar(-15);
     new TWEEN.Tween(App.camera.position).to(tPos.clone().add(new THREE.Vector3(0, 5, 0)).add(dirToSun), 1500).start();
 }
 
 // ================= [ 7. 글로벌 라우팅 및 애니메이션 루프 ] =================
+
+// 로비 모듈 선택
 document.querySelectorAll('.module-card').forEach(card => {
     card.addEventListener('click', () => {
         DOM.lobby.style.opacity = "0";
@@ -327,12 +339,14 @@ document.querySelectorAll('.module-card').forEach(card => {
     });
 });
 
+// 로비로 복귀
 DOM.btnHub.addEventListener('click', () => {
     DOM.uiDS.style.display = 'none'; DOM.uiSS.style.display = 'none'; DOM.uiPR.style.display = 'none'; DOM.btnHub.style.display = 'none';
     App.mode = 'lobby'; clearScene(); buildLobbyBackground();
     DOM.lobby.style.display = 'flex'; setTimeout(() => DOM.lobby.style.opacity = "1", 100);
 });
 
+// 이벤트 바인딩 묶음
 DOM.dsTargets.forEach(btn => btn.addEventListener('click', (e) => { DOM.dsTargets.forEach(b => b.classList.remove('active')); e.target.closest('.target-btn').classList.add('active'); dsWarpTo(e.target.closest('.target-btn').dataset.target); }));
 DOM.bhMass.addEventListener('input', dsUpdatePhysics); DOM.bhDist.addEventListener('input', dsUpdatePhysics);
 
@@ -342,16 +356,20 @@ DOM.ssBtnReset.addEventListener('click', () => {
 });
 DOM.ssSpeed.addEventListener('input', e => { SSEngine.speedMulti = parseFloat(e.target.value) / 10; document.getElementById('ss-speed-val').textContent = `${(SSEngine.speedMulti*10).toFixed(1)}x`; });
 
+// 누락되었던 모듈 3(탐사선) 리셋 버튼 이벤트 복원!
 DOM.btnPrReset.addEventListener('click', () => {
     PREngine.tracked = null; document.querySelectorAll('.pr-target').forEach(b => b.classList.remove('active')); DOM.prInfo.style.opacity = "0";
     new TWEEN.Tween(App.camera.position).to(new THREE.Vector3(0, 500, 800), 1500).start(); new TWEEN.Tween(App.controls.target).to(new THREE.Vector3(0,0,0), 1500).start();
 });
 
+// 최종 애니메이션 루프
 function animate() {
     requestAnimationFrame(animate);
     TWEEN.update(); 
 
-    if (App.mode === 'lobby') { App.scene.rotation.y += 0.0005; } 
+    if (App.mode === 'lobby') { 
+        App.scene.rotation.y += 0.0005; 
+    } 
     else if (App.mode === 'deepspace') {
         Object.keys(DB.deepspace).forEach(k => { if(DB.deepspace[k].type === 'nebula' && DSEngine.objects[k]) DSEngine.objects[k].rotation.y += 0.0002; });
         if (DSEngine.bh.disk) {
@@ -378,6 +396,7 @@ function animate() {
         }
     }
     else if (App.mode === 'probes') {
+        // 프로브 메쉬(팔면체)가 제자리에서 천천히 회전하는 효과
         PREngine.probes.forEach(p => p.mesh.rotation.y += 0.02);
     }
 

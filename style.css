@@ -120,7 +120,7 @@ body {
 
 .control-group label { display: block; font-size: 10px; color: var(--color-text-secondary); margin-bottom: 8px; letter-spacing: 1px; font-family: var(--font-data);}
 
-/* 슬라이더 에러 완벽 해결 (크로스 브라우징) */
+/* 슬라이더 트랙 및 에러 해결 */
 .control-group input[type="range"] { 
     width: 100%; margin-bottom: 5px; height: 2px; 
     -webkit-appearance: none; appearance: none; 

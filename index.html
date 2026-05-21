@@ -12,6 +12,17 @@
 </head>
 <body class="dark-mode">
 
+    <div id="module-loader" class="module-loader" style="display: none;">
+        <div class="loader-content">
+            <div class="spinner"></div>
+            <h2 style="color: var(--color-accent-gold); font-family: var(--font-heading); font-weight: normal; letter-spacing: 3px; margin-top: 20px;">INITIALIZING TELEMETRY</h2>
+            <p id="loader-text" style="font-family: var(--font-data); font-size: 11px; color: var(--color-text-secondary); margin-top: 10px; letter-spacing: 2px;">Downloading High-Res Textures...</p>
+            <div class="loader-bar-bg">
+                <div id="loader-bar-fill" class="loader-bar-fill"></div>
+            </div>
+        </div>
+    </div>
+
     <div id="three-canvas" class="fullscreen-viz"></div>
 
     <header class="global-header">
@@ -31,14 +42,12 @@
         </div>
     </header>
 
-    <!-- [0] MAIN LOBBY -->
     <div id="ui-lobby" class="lobby-container">
         <div class="welcome-text">
             <h2>SELECT EXPLORATION MODULE</h2>
             <p>탐구할 우주 스케일을 선택하세요.</p>
         </div>
         <div class="module-cards">
-            <!-- [이미지 URL 원본으로 전면 복구됨] -->
             <div class="module-card" data-module="deepspace">
                 <div class="card-bg" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/4/4f/Black_hole_-_Messier_87_crop_max_res.jpg');"></div>
                 <div class="card-content">
@@ -75,7 +84,6 @@
         <div class="lobby-footer">DEVELOPED & DESIGNED BY 10621 이정욱</div>
     </div>
 
-    <!-- [1] DEEP SPACE UI -->
     <div id="ui-deepspace" class="module-ui" style="display: none;">
         <div class="hud-panel left-hud">
             <h2>UNIVERSE MAP</h2>
@@ -109,7 +117,6 @@
         </div>
     </div>
 
-    <!-- [2] SOLAR SYSTEM UI -->
     <div id="ui-solarsystem" class="module-ui" style="display: none;">
         <div class="hud-panel left-hud">
             <h2>PLANETARY TARGETS</h2>
@@ -141,7 +148,6 @@
         </div>
     </div>
 
-    <!-- [3] INTERSTELLAR PROBES UI -->
     <div id="ui-probes" class="module-ui" style="display: none;">
         <div class="hud-panel left-hud">
             <h2 style="color: #a277ff;">INTERSTELLAR PROBES</h2>
@@ -169,7 +175,6 @@
         </div>
     </div>
 
-    <!-- [4] GENESIS ENGINE UI (3개 신규 옵션 추가됨) -->
     <div id="ui-genesis" class="module-ui" style="display: none;">
         <div class="hud-panel left-hud" style="width: 420px;">
             <h2 style="color: #ffaa00;">GENESIS ENGINE</h2>
@@ -189,8 +194,6 @@
                 <div class="telemetry-row"><span>COSMIC EPOCH (시대)</span><span id="gn-epoch" class="mono-data" style="color: #fff; font-size: 14px;">SINGULARITY</span></div>
                 <div class="telemetry-row"><span>ESTIMATED AGE</span><span id="gn-age" class="mono-data" style="color: #ffaa00;">0 Years</span></div>
                 <div class="telemetry-row"><span>AVERAGE TEMP</span><span id="gn-temp" class="mono-data" style="color: #ff5555;">∞ K</span></div>
-                
-                <!-- [신규 추가된 3가지 핵심 지표] -->
                 <div class="telemetry-row" style="border-top: 1px dashed rgba(255,170,0,0.3); padding-top:10px; margin-top:5px;">
                     <span>UNIVERSE SIZE</span><span id="gn-size" class="mono-data" style="color: #64ffda;">--</span>
                 </div>

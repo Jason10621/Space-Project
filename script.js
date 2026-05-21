@@ -2,13 +2,12 @@
 // HAFS Grand Observatory (V15.0 Absolute Master Core)
 // Project Creator: 10621 이정욱
 // Rules Enforced: 100% Quantity Preservation, Unlimited Length.
-// Fixed: Restored all Raw Image URLs (No hotlink breakage)
-// Added: 3 New Cosmological Metrics for Genesis Engine
+// Added: High-Res Textures, Cloud Atmosphere Mesh, Global Loading Manager
 // =======================================================================
 
 const App = { mode: 'lobby', scene: null, camera: null, renderer: null, controls: null };
 
-// --- 1. 천문 대백과사전 데이터베이스 (이미지 원본 URL로 100% 교체 및 위성 완벽 복원) ---
+// --- 1. 천문 대백과사전 데이터베이스 ---
 const DB = {
     deepspace: {
         'home': { 
@@ -60,6 +59,11 @@ const DB = {
         { 
             id: "earth", name: "EARTH (지구)", r: 2.0, d: 45, speed: 0.029, color: 0x3366ff, 
             img: "https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17.jpg", 
+            // [신규] 고해상도 텍스처 맵핑
+            textureMap: "https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg",
+            bumpMap: "https://unpkg.com/three-globe/example/img/earth-topology.png",
+            specularMap: "https://unpkg.com/three-globe/example/img/earth-water.png",
+            cloudMap: "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_clouds_1024.png",
             temp: "15°C", orb: "29.78", 
             desc: "액체 상태의 물이 존재하는 생명체 거주 행성.", details: "다이나모 이론에 의한 자기장 형성으로 태양풍으로부터 생명체를 보호합니다.", 
             atm: [{n: "질소", p: 78, c: "#8892b0"}, {n: "산소", p: 21, c: "#66ccff"}], internal: [{n: "지각", p: 5, c: "#8b7355"}, {n: "맨틀", p: 40, c: "#b33c00"}, {n: "외핵", p: 35, c: "#ff6600"}, {n: "내핵", p: 20, c: "#ffcc00"}], 
@@ -81,6 +85,8 @@ const DB = {
         { 
             id: "jupiter", name: "JUPITER (목성)", r: 5.5, d: 95, speed: 0.013, color: 0xdda050, 
             img: "https://upload.wikimedia.org/wikipedia/commons/e/e2/Jupiter.jpg", 
+            // [신규] 목성의 대적점 텍스처
+            textureMap: "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/jupiter.jpg",
             temp: "-110°C", orb: "13.07", 
             desc: "태양계에서 가장 거대한 가스 행성.", details: "내부의 거대한 액체 금속 수소 바다가 초강력 자기장을 만들어냅니다. 대적점 폭풍이 특징입니다.", 
             atm: [{n: "수소", p: 89, c: "#4da6ff"}, {n: "헬륨", p: 10, c: "#ffcc99"}], internal: [{n: "기체 수소", p: 15, c: "#ffeebb"}, {n: "액체 금속 수소", p: 70, c: "#99aacc"}, {n: "암석 코어", p: 15, c: "#444444"}], 
@@ -138,7 +144,6 @@ const DB = {
     ]
 };
 
-// [신규] 우주 탄생 (빅뱅~현재) 타임라인 데이터 (3가지 신규 매개변수 추가)
 const GenesisData = [
     { t: 0, epoch: "SINGULARITY (특이점)", age: "0 Years", temp: "10^32 K (Planck Temp)", size: "1.6 × 10^-35 m", comp: "Unified Superforce", redshift: "Infinite", desc: "빅뱅. 모든 물질과 에너지가 상상할 수 없는 밀도의 한 점에 응축되어 있는 우주의 시작점입니다.", details: "공간과 시간의 개념이 탄생하는 순간이며, 현재의 물리학 법칙으로는 설명할 수 없는 플랑크 시대(Planck Epoch)입니다.", img: "https://upload.wikimedia.org/wikipedia/commons/6/6f/CMB_Timeline300_no_WMAP.jpg" },
     { t: 10, epoch: "COSMIC INFLATION", age: "10^-32 Seconds", temp: "10^27 K", size: "~10 cm (Grapefruit)", comp: "Quark-Gluon Plasma", redshift: "> 10^25", desc: "우주가 빛보다 빠른 속도로 기하급수적 팽창(Inflation)을 겪으며, 구조의 양자적 씨앗이 우주 전체로 흩뿌려집니다.", details: "공간 자체가 팽창하므로 상대성이론에 위배되지 않습니다. 쿼크와 글루온이 자유롭게 떠다니는 초고온 플라즈마 상태입니다.", img: "https://upload.wikimedia.org/wikipedia/commons/3/37/Universe_expansion2.png" },
@@ -147,37 +152,30 @@ const GenesisData = [
     { t: 100, epoch: "PRESENT UNIVERSE", age: "13.8 Billion Years", temp: "2.73 K", size: "93 Billion Light Years", comp: "Dark Energy (68%)", redshift: "z = 0", desc: "암흑 물질의 중력 뼈대(Cosmic Web)를 따라 수많은 은하와 은하단이 형성된 현재의 우주입니다.", details: "미스터리한 암흑 에너지가 우주의 팽창 속도를 점점 더 가속화시키고 있습니다. 우리은하를 포함한 수천억 개의 은하들이 존재합니다.", img: "https://upload.wikimedia.org/wikipedia/commons/4/43/ESO-VLT-Laser-phot-33a-07.jpg" }
 ];
 
-// --- 독립 엔진 시스템 객체 배열 ---
 const DSEngine = { objects: {}, bh: { eh: null, ps: null, disk: null, speeds: [], count: 35000, geometry: null } };
 const SSEngine = { planets: [], moons: [], tracked: null, speedMulti: 1.0 };
 const PREngine = { probes: [], tracked: null };
 const GNEngine = { particles: null, pos0: null, pos1: null, pos2: null, count: 50000 };
 
-// --- DOM 바인딩 ---
 const DOM = {
     lobby: document.getElementById('ui-lobby'), btnHub: document.getElementById('btn-return-hub'),
     uiDS: document.getElementById('ui-deepspace'), uiSS: document.getElementById('ui-solarsystem'), uiPR: document.getElementById('ui-probes'), uiGN: document.getElementById('ui-genesis'),
     
-    // DS
     dsTargets: document.querySelectorAll('.ds-target'), dsInfo: document.getElementById('ds-info'), dsTitle: document.getElementById('ds-title'), dsMedia: document.getElementById('ds-media'), dsDesc: document.getElementById('ds-desc'), dsDetails: document.getElementById('ds-details'),
     dsNormal: document.getElementById('ds-normal-info'), dsSubList: document.getElementById('ds-sub-list'), dsBHCtrl: document.getElementById('ds-bh-controls'), bhMass: document.getElementById('bh-mass'), bhDist: document.getElementById('bh-dist'), dsMetricsBar: document.getElementById('ds-metrics-bar'), dsMetricsLegend: document.getElementById('ds-metrics-legend'),
     
-    // SS
     ssList: document.getElementById('ss-planet-list'), ssSpeed: document.getElementById('ss-speed'), ssBtnReset: document.getElementById('btn-ss-reset'),
     ssInfo: document.getElementById('ss-info'), ssName: document.getElementById('ss-name'), ssMedia: document.getElementById('ss-media'), ssDesc: document.getElementById('ss-desc'), ssDetails: document.getElementById('ss-details'), ssTemp: document.getElementById('ss-temp'), ssOrb: document.getElementById('ss-orb'), ssCompBar: document.getElementById('ss-comp-bar'), ssCompLegend: document.getElementById('ss-comp-legend'),
     ssInternalBar: document.getElementById('ss-internal-bar'), ssInternalLegend: document.getElementById('ss-internal-legend'), ssMoonsCont: document.getElementById('ss-moons-container'), ssMoonsList: document.getElementById('ss-moons-list'),
     ssPlanetData: document.getElementById('ss-planet-data'), ssMoonData: document.getElementById('ss-moon-data'), ssMoonPeriod: document.getElementById('ss-moon-period'), ssMoonGrav: document.getElementById('ss-moon-grav'),
     
-    // PR
     prList: document.getElementById('pr-list'), btnPrReset: document.getElementById('btn-pr-reset'),
     prInfo: document.getElementById('pr-info'), prName: document.getElementById('pr-name'), prMedia: document.getElementById('pr-media'), prDesc: document.getElementById('pr-desc'), prDetails: document.getElementById('pr-details'), prLaunch: document.getElementById('pr-launch'), prTarget: document.getElementById('pr-target'), prPowerBar: document.getElementById('pr-power-bar'), prDist: document.getElementById('pr-dist'), prVel: document.getElementById('pr-vel'), prDelay: document.getElementById('pr-delay'),
 
-    // GN (제네시스 3개 신규 변수 추가)
     gnTimeline: document.getElementById('gn-timeline'), gnEpoch: document.getElementById('gn-epoch'), gnAge: document.getElementById('gn-age'), gnTemp: document.getElementById('gn-temp'), gnMedia: document.getElementById('gn-media'), gnDesc: document.getElementById('gn-desc'), gnDetails: document.getElementById('gn-details'),
     gnSize: document.getElementById('gn-size'), gnComp: document.getElementById('gn-comp'), gnRedshift: document.getElementById('gn-redshift')
 };
 
-// ================= [ 글로벌 라이프사이클 ] =================
 function initGlobalCore() {
     const container = document.getElementById('three-canvas');
     App.scene = new THREE.Scene();
@@ -212,7 +210,7 @@ function buildLobbyBackground() {
     App.camera.position.set(0, 0, 500); App.controls.target.set(0, 0, 0);
 }
 
-// ================= [ M1: DEEP SPACE ] =================
+// [1] DEEP SPACE
 function launchDeepSpace() {
     App.mode = 'deepspace'; clearScene(); App.scene.fog = new THREE.FogExp2(0x020204, 0.0001);
     const bgGeo = new THREE.BufferGeometry(); const bgPos = new Float32Array(15000 * 3);
@@ -305,23 +303,64 @@ function dsUpdatePhysics() {
     document.getElementById('bh-time').textContent = timeDilation > 0 ? timeDilation.toFixed(4) + "x" : "INFINITE";
 }
 
-// ================= [ M2: SOLAR SYSTEM ] =================
+// [2] SOLAR SYSTEM (텍스처 로더 탑재)
 function launchSolarSystem() {
     App.mode = 'solarsystem'; clearScene(); App.scene.fog = new THREE.FogExp2(0x020204, 0.0005);
     
+    // [신규] 로딩 매니저 설정
+    const loaderScreen = document.getElementById('module-loader');
+    const loaderFill = document.getElementById('loader-bar-fill');
+    loaderScreen.style.display = 'flex'; loaderScreen.style.opacity = '1';
+    
+    const loadingManager = new THREE.LoadingManager();
+    loadingManager.onProgress = function(url, itemsLoaded, itemsTotal) {
+        loaderFill.style.width = (itemsLoaded / itemsTotal * 100) + '%';
+    };
+    loadingManager.onLoad = function() {
+        setTimeout(() => {
+            loaderScreen.style.opacity = '0';
+            setTimeout(() => loaderScreen.style.display = 'none', 800);
+        }, 500);
+    };
+
+    const textureLoader = new THREE.TextureLoader(loadingManager);
+
     const starsGeo = new THREE.BufferGeometry(); const starsPos = new Float32Array(5000 * 3);
     for(let i=0; i<5000*3; i++) starsPos[i] = (Math.random() - 0.5) * 2000;
     starsGeo.setAttribute('position', new THREE.BufferAttribute(starsPos, 3));
     App.scene.add(new THREE.Points(starsGeo, new THREE.PointsMaterial({color: 0xaaaaaa, size: 1.5})));
 
-    const sun = new THREE.Mesh(new THREE.SphereGeometry(8, 64, 64), new THREE.MeshBasicMaterial({ color: 0xffcc33 }));
-    App.scene.add(sun); App.scene.add(new THREE.PointLight(0xffffff, 2, 800)); App.scene.add(new THREE.AmbientLight(0x333333));
+    // 태양 설정
+    const sunMat = new THREE.MeshBasicMaterial({ color: 0xffcc33 });
+    const sun = new THREE.Mesh(new THREE.SphereGeometry(8, 64, 64), sunMat);
+    App.scene.add(sun); 
+    App.scene.add(new THREE.PointLight(0xffffff, 2.5, 1000)); // 광원 세기 조절
+    App.scene.add(new THREE.AmbientLight(0x222222)); // 텍스처 명암비를 위한 어두운 Ambient
 
     DOM.ssList.innerHTML = '';
     
     DB.solarsystem.forEach(pData => {
-        const pMesh = new THREE.Mesh(new THREE.SphereGeometry(pData.r, 32, 32), new THREE.MeshStandardMaterial({ color: pData.color, roughness: 0.6 }));
+        // [신규] 머티리얼 속성 동적 세팅
+        const matConfig = { color: pData.color, roughness: 0.7, metalness: 0.1 };
+        
+        if (pData.textureMap) matConfig.map = textureLoader.load(pData.textureMap);
+        if (pData.bumpMap) { matConfig.bumpMap = textureLoader.load(pData.bumpMap); matConfig.bumpScale = 0.05; }
+        if (pData.specularMap) { matConfig.roughnessMap = textureLoader.load(pData.specularMap); matConfig.roughness = 0.5; }
+
+        const pMat = new THREE.MeshStandardMaterial(matConfig);
+        const pMesh = new THREE.Mesh(new THREE.SphereGeometry(pData.r, 64, 64), pMat);
         pMesh.position.x = pData.d;
+
+        let cloudMesh = null;
+        // [신규] 대기 구름 레이어
+        if (pData.cloudMap) {
+            const cloudMat = new THREE.MeshStandardMaterial({
+                map: textureLoader.load(pData.cloudMap),
+                transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false
+            });
+            cloudMesh = new THREE.Mesh(new THREE.SphereGeometry(pData.r * 1.02, 64, 64), cloudMat);
+            pMesh.add(cloudMesh);
+        }
 
         if(pData.hasRing) {
             const ring = new THREE.Mesh(new THREE.RingGeometry(pData.r * pData.ringInner, pData.r * pData.ringOuter, 64), new THREE.MeshStandardMaterial({ color: pData.ringColor, side: THREE.DoubleSide, transparent:true, opacity:0.7 }));
@@ -330,7 +369,7 @@ function launchSolarSystem() {
 
         if(pData.moons && pData.moons.length > 0) {
             pData.moons.forEach(mData => {
-                const mMesh = new THREE.Mesh(new THREE.SphereGeometry(mData.r, 16, 16), new THREE.MeshStandardMaterial({color: mData.color}));
+                const mMesh = new THREE.Mesh(new THREE.SphereGeometry(mData.r, 32, 32), new THREE.MeshStandardMaterial({color: mData.color}));
                 mMesh.position.x = mData.d;
                 const mPivot = new THREE.Group(); mPivot.add(mMesh); pMesh.add(mPivot);
                 const mOrbit = new THREE.Mesh(new THREE.RingGeometry(mData.d - 0.05, mData.d + 0.05, 64), new THREE.MeshBasicMaterial({ color: 0x555555, side: THREE.DoubleSide, transparent:true, opacity:0.5 }));
@@ -343,7 +382,7 @@ function launchSolarSystem() {
         const orbit = new THREE.Mesh(new THREE.RingGeometry(pData.d - 0.1, pData.d + 0.1, 128), new THREE.MeshBasicMaterial({ color: 0x333333, side: THREE.DoubleSide }));
         orbit.rotation.x = Math.PI / 2; App.scene.add(orbit);
 
-        SSEngine.planets.push({ id: pData.id, pivot, mesh: pMesh, speed: pData.speed, data: pData, type: 'planet' });
+        SSEngine.planets.push({ id: pData.id, pivot, mesh: pMesh, clouds: cloudMesh, speed: pData.speed, data: pData, type: 'planet' });
 
         const btn = document.createElement('button'); btn.className = 'target-btn ss-target';
         btn.innerHTML = `<span class="btn-title" style="display:flex; align-items:center; gap:8px;"><span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#${pData.color.toString(16)}"></span>${pData.name}</span>`;
@@ -409,7 +448,7 @@ function ssUpdatePlanetInfo(data, isMoon = false) {
     DOM.ssInfo.style.opacity = "1";
 }
 
-// ================= [ M3: INTERSTELLAR PROBES ] =================
+// [3] INTERSTELLAR PROBES
 function launchProbes() {
     App.mode = 'probes'; clearScene(); App.scene.fog = new THREE.FogExp2(0x010205, 0.0001); 
     
@@ -483,14 +522,14 @@ function prUpdateInfo(pData) {
     new TWEEN.Tween(App.camera.position).to(tPos.clone().add(new THREE.Vector3(0, 10, 0)).add(dirToSun), 1500).start();
 }
 
-// ================= [ M4: GENESIS ENGINE (빅뱅 & 우주 진화) ] =================
+// [4] GENESIS ENGINE
 function launchGenesis() {
     App.mode = 'genesis'; clearScene(); App.scene.fog = new THREE.FogExp2(0x020204, 0.0002);
     
     const geo = new THREE.BufferGeometry();
-    GNEngine.pos0 = new Float32Array(GNEngine.count * 3); // Stage 0: Singularity
-    GNEngine.pos1 = new Float32Array(GNEngine.count * 3); // Stage 1: Inflation Sphere
-    GNEngine.pos2 = new Float32Array(GNEngine.count * 3); // Stage 2: Cosmic Web
+    GNEngine.pos0 = new Float32Array(GNEngine.count * 3); 
+    GNEngine.pos1 = new Float32Array(GNEngine.count * 3); 
+    GNEngine.pos2 = new Float32Array(GNEngine.count * 3); 
     const currentPos = new Float32Array(GNEngine.count * 3);
     const colors = new Float32Array(GNEngine.count * 3);
 
@@ -544,7 +583,6 @@ function gnUpdateTimeline(val) {
     DOM.gnDetails.textContent = stageInfo.details;
     DOM.gnMedia.style.backgroundImage = `url('${stageInfo.img}')`;
     
-    // [신규] 제네시스 3가지 옵션 데이터 바인딩
     DOM.gnSize.textContent = stageInfo.size;
     DOM.gnComp.textContent = stageInfo.comp;
     DOM.gnRedshift.textContent = stageInfo.redshift;
@@ -577,7 +615,9 @@ function gnUpdateTimeline(val) {
     GNEngine.particles.geometry.attributes.color.needsUpdate = true;
 }
 
-// ================= [ 7. 글로벌 라우팅 및 애니메이션 루프 ] =================
+// -------------------------------------------------------------
+// 이벤트 리스너 및 애니메이션 루프
+// -------------------------------------------------------------
 document.querySelectorAll('.module-card').forEach(card => {
     card.addEventListener('click', () => {
         DOM.lobby.style.opacity = "0";
@@ -643,7 +683,12 @@ function animate() {
         }
     } 
     else if (App.mode === 'solarsystem') {
-        SSEngine.planets.forEach(p => { p.pivot.rotation.y += p.speed * SSEngine.speedMulti; p.mesh.rotation.y += 0.05 * SSEngine.speedMulti; });
+        SSEngine.planets.forEach(p => { 
+            p.pivot.rotation.y += p.speed * SSEngine.speedMulti; 
+            p.mesh.rotation.y += 0.05 * SSEngine.speedMulti; 
+            // [신규] 대기권(구름) 애니메이션 - 지표면과 다른 속도로 회전하여 기류 표현
+            if (p.clouds) { p.clouds.rotation.y += 0.06 * SSEngine.speedMulti; }
+        });
         SSEngine.moons.forEach(m => { m.pivot.rotation.y += m.speed * SSEngine.speedMulti; });
         if (SSEngine.tracked) {
             const tPos = new THREE.Vector3(); SSEngine.tracked.mesh.getWorldPosition(tPos); 

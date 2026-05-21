@@ -44,7 +44,6 @@ body { background-color: var(--color-bg-main); color: var(--color-text-primary);
 .welcome-text h2 { font-family: var(--font-heading); font-size: 32px; color: #fff; letter-spacing: 5px; margin-bottom: 15px; font-weight: normal;}
 .welcome-text p { color: var(--color-accent-gold); font-size: 13px; letter-spacing: 2px; font-family: var(--font-data);}
 
-/* 4개의 모듈 카드를 2x2 그리드로 예쁘게 배치 */
 .module-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 900px; width: 95%; justify-content: center; align-items: center;}
 .module-card { background: rgba(20, 25, 35, 0.4); border: 1px solid rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden; cursor: pointer; transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 .module-card:hover { transform: translateY(-8px); border-color: var(--color-accent-gold); box-shadow: 0 20px 50px rgba(230, 194, 122, 0.15); }
@@ -110,3 +109,24 @@ body { background-color: var(--color-bg-main); color: var(--color-text-primary);
 .sub-list li { background: rgba(10,14,22,1); padding: 15px; }
 .sub-title { display: block; font-family: var(--font-data); font-size: 11px; color: #fff; margin-bottom: 6px; letter-spacing: 1px; }
 .sub-detail { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; font-weight: 300;}
+
+/* =========================================
+   [신규] 로딩 스크린 스타일링
+   ========================================= */
+.module-loader {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(2, 2, 4, 0.95); backdrop-filter: blur(20px);
+    z-index: 1000; display: flex; justify-content: center; align-items: center;
+    transition: opacity 0.8s ease, visibility 0.8s;
+}
+.loader-content { text-align: center; display: flex; flex-direction: column; align-items: center; }
+.spinner {
+    width: 60px; height: 60px;
+    border: 2px solid rgba(230, 194, 122, 0.1);
+    border-top: 2px solid var(--color-accent-gold);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+.loader-bar-bg { width: 300px; height: 2px; background: rgba(255,255,255,0.1); margin-top: 20px; position: relative; overflow: hidden;}
+.loader-bar-fill { height: 100%; width: 0%; background: var(--color-accent-gold); transition: width 0.2s ease; box-shadow: 0 0 10px var(--color-accent-gold);}

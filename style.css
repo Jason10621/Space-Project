@@ -1,5 +1,6 @@
 /* =========================================
-   HAFS Grand Observatory - Image Fallback UI Update
+   HAFS Grand Observatory - Luxury Premium Edition
+   Design & Developed by 10621 이정욱
    ========================================= */
 
 :root {
@@ -83,7 +84,6 @@ body { background-color: var(--color-bg-main); color: var(--color-text-primary);
 
 .media-box { 
     width: 100%; height: 200px; 
-    background-size: cover; background-position: center; background-repeat: no-repeat;
     background-color: #0b0d12; 
     border: 1px solid rgba(255,255,255,0.1); position: relative; margin-top: 20px; margin-bottom: 20px; 
     box-shadow: inset 0 0 20px rgba(0,0,0,0.8);

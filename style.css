@@ -1,6 +1,5 @@
 /* =========================================
-   HAFS Grand Observatory - Luxury Premium Edition
-   Design & Developed by 10621 이정욱
+   HAFS Grand Observatory - Image Fallback UI Update
    ========================================= */
 
 :root {
@@ -55,8 +54,6 @@ body { background-color: var(--color-bg-main); color: var(--color-text-primary);
 .module-tag { font-family: var(--font-data); font-size: 10px; font-weight: normal; letter-spacing: 1px; border-bottom: 1px solid; padding-bottom: 5px; display: inline-block; margin-bottom: 15px; }
 .card-content h3 { font-family: var(--font-heading); font-size: 18px; margin-bottom: 10px; color: #fff; letter-spacing: 1px; font-weight: normal;}
 .card-content p { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; margin-bottom: 20px; height: 40px; font-weight: 300;}
-.launch-text { font-family: var(--font-data); font-size: 11px; letter-spacing: 2px; color: var(--color-accent-gold); opacity: 0.5; transition: 0.4s; }
-.module-card:hover .launch-text { opacity: 1; padding-left: 10px; }
 
 .lobby-footer { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); font-family: var(--font-data); font-size: 10px; color: rgba(255,255,255,0.2); letter-spacing: 4px; pointer-events: none; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;}
 
@@ -83,9 +80,15 @@ body { background-color: var(--color-bg-main); color: var(--color-text-primary);
 .control-group label { display: block; font-size: 10px; color: var(--color-text-secondary); margin-bottom: 8px; letter-spacing: 1px; font-family: var(--font-data);}
 .control-group input[type="range"] { width: 100%; margin-bottom: 5px; height: 2px; -webkit-appearance: none; appearance: none; background: rgba(255,255,255,0.2); outline: none;}
 .control-group input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 12px; height: 12px; background: #fff; cursor: pointer; border-radius: 50%; box-shadow: 0 0 5px rgba(255,255,255,0.8);}
-.control-group input[type="range"]::-moz-range-thumb { width: 12px; height: 12px; background: #fff; cursor: pointer; border-radius: 50%; border: none; box-shadow: 0 0 5px rgba(255,255,255,0.8);}
 
-.media-box { width: 100%; height: 200px; background-size: cover; background-position: center; border: 1px solid rgba(255,255,255,0.1); position: relative; margin-top: 20px; margin-bottom: 20px; box-shadow: inset 0 0 20px rgba(0,0,0,0.8);}
+.media-box { 
+    width: 100%; height: 200px; 
+    background-size: cover; background-position: center; background-repeat: no-repeat;
+    background-color: #0b0d12; 
+    border: 1px solid rgba(255,255,255,0.1); position: relative; margin-top: 20px; margin-bottom: 20px; 
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+    display: flex; align-items: center; justify-content: center; flex-direction: column;
+}
 .media-box::after { content: 'NASA PUBLIC DOMAIN'; position: absolute; bottom: 8px; right: 8px; font-family: var(--font-data); font-size: 8px; letter-spacing: 1px; background: rgba(0,0,0,0.6); padding: 4px 8px; color: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.1);}
 
 .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px;}
@@ -110,9 +113,6 @@ body { background-color: var(--color-bg-main); color: var(--color-text-primary);
 .sub-title { display: block; font-family: var(--font-data); font-size: 11px; color: #fff; margin-bottom: 6px; letter-spacing: 1px; }
 .sub-detail { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; font-weight: 300;}
 
-/* =========================================
-   [신규] 로딩 스크린 스타일링
-   ========================================= */
 .module-loader {
     position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
     background: rgba(2, 2, 4, 0.95); backdrop-filter: blur(20px);
